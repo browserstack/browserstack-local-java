@@ -1,0 +1,5 @@
+bin/
+browserstack-api/target
+*.class
+.DS_Store
+*.swp
