@@ -18,19 +18,19 @@ public class BrowserStackLocal {
   private static Logger logger;
   private static final int MAX_CONNECT_WAIT = 30000; // 30s x 2 = 60s
   private static final int MAX_CONNECT_ATTEMPTS = 2;
-
+  
   private final File binaryFile;
   private final String argumentString;
-
+  
   private Process process;
   private Thread processThread;
-
+  
   private StringBuffer output;
   private String lastError;
   private TunnelState tunnelState;
-
+  
   private BrowserStackLocalListener listener;
-
+  
   private static final Object monitor = new Object();
   private static final Map<Pattern, TunnelState> stateMatchers = new HashMap<Pattern, TunnelState>();
 
@@ -44,13 +44,13 @@ public class BrowserStackLocal {
       throw new IllegalArgumentException("Invalid arguments");
     }
 
-    this.binaryFile = binaryFile;
-    this.argumentString = argumentString;
-    this.output = new StringBuffer();
-    this.tunnelState = TunnelState.IDLE;
-    this.logger = BrowserStackTunnel.logger;
+  this.binaryFile = binaryFile;
+  this.argumentString = argumentString;
+  this.output = new StringBuffer();
+  this.tunnelState = TunnelState.IDLE;
+  this.logger = BrowserStackTunnel.logger;
 
-    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+  Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
       @Override
       public void run() {
         BrowserStackLocal.this.kill();
@@ -66,31 +66,32 @@ public class BrowserStackLocal {
     processThread = new Thread(new Runnable() {
       @Override
       public void run() {
-        notifyTunnelStateChanged(TunnelState.CONNECTING);
-
-        try {
-          logger.fine("Arguments -- " + argumentString);
-          process = new ProcessBuilder((binaryFile.getAbsolutePath() + " " + argumentString).split(" ")).start();
-          BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-          String line;
-          while ((line = br.readLine()) != null) {
-            output.append(line).append("\n");
-
-            if (processOutput(output.toString())) {
-              logger.fine(output.toString());
-              output.setLength(0);
-            }
-          }
-        } catch (IOException e) {
-          if (listener != null) {
-            listener.onError(e.getMessage());
-          }
-        } finally {
-          logger.fine(output.toString());
-          output.setLength(0);
-          notifyTunnelStateChanged(TunnelState.DISCONNECTED);
-        }
+     	  notifyTunnelStateChanged(TunnelState.CONNECTING);
+    
+     	  try {
+     	    logger.fine("Arguments -- " + argumentString);
+     	    process = new ProcessBuilder((binaryFile.getAbsolutePath() + " " + argumentString)
+                        .split(" ")).start();
+     	    BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    
+     	    String line;
+     	    while ((line = br.readLine()) != null) {
+     	      output.append(line).append("\n");
+    
+     	      if (processOutput(output.toString())) {
+     	        logger.fine(output.toString());
+     	        output.setLength(0);
+     	      }
+     	    }
+     	  } catch (IOException e) {
+     	      if (listener != null) {
+     	  	    listener.onError(e.getMessage());
+     	      }
+     	  } finally {
+     	      logger.fine(output.toString());
+     	      output.setLength(0);
+     	      notifyTunnelStateChanged(TunnelState.DISCONNECTED);
+     	  }
       }
     });
 
@@ -104,17 +105,17 @@ public class BrowserStackLocal {
 
   protected void runSync(BrowserStackLocalListener listener) {
     setListener(listener);
-
+    
     if (process != null) {
       kill();
     }
-
+    
     notifyTunnelStateChanged(TunnelState.CONNECTING);
     run();
-
+    
     int connAttempts = 0;
     boolean connFailed = false;
-
+    
     synchronized (monitor) {
       while (tunnelState == TunnelState.CONNECTING) {
         logger.info("Waiting: " + connAttempts);
@@ -123,14 +124,14 @@ public class BrowserStackLocal {
         } catch (InterruptedException e) {
           logger.info("Exc: " + e.getMessage() + " " + isConnected());
         }
-
+        
         if (MAX_CONNECT_ATTEMPTS > 0 && ++connAttempts >= MAX_CONNECT_ATTEMPTS) {
           connFailed = true;
           break;
         }
       }
     }
-
+    
     if (connFailed) {
       killWithError("Failed to connect to BrowserStack");
     }
@@ -141,12 +142,12 @@ public class BrowserStackLocal {
       process.destroy();
       process = null;
     }
-
+    
     if (processThread != null && processThread.isAlive()) {
       processThread.interrupt();
       processThread = null;
     }
-
+    
     logger.fine(output.toString());
     output.setLength(0);
     tunnelState = TunnelState.DISCONNECTED;
@@ -177,24 +178,24 @@ public class BrowserStackLocal {
   private boolean processOutput(final String output) {
     if (output != null && !output.trim().isEmpty()) {
       String error;
-
+      
       for (Map.Entry<Pattern, TunnelState> entry : stateMatchers.entrySet()) {
         Matcher m = entry.getKey().matcher(output);
-
+        
         if (m.find()) {
           if (entry.getValue() == TunnelState.ERROR) {
             error = (m.groupCount() > 0) ? m.group(1) : output;
           } else {
             error = null;
           }
-
+          
           setError(error);
           notifyTunnelStateChanged(entry.getValue());
           return true;
         }
       }
     }
-
+  
     return false;
   }
 
@@ -203,20 +204,21 @@ public class BrowserStackLocal {
       if (listener != null) {
         listener.onTunnelStateChange(state);
       }
-
+      
       synchronized (monitor) {
         monitor.notifyAll();
       }
     }
-
+  
     tunnelState = state;
   }
 
   private void setError(String message) {
     lastError = message;
-
+    
     if (listener != null) {
       listener.lastError = lastError;
     }
   }
+
 }

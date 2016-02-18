@@ -1,5 +1,3 @@
-package sample;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -10,6 +8,7 @@ import java.net.URL;
 
 import com.browserstack.local.BrowserStackTunnel;
 import com.browserstack.local.BrowserStackTunnel.BrowserStackLocalListener;
+import com.browserstack.local.BrowserStackTunnelOptions;
 
 public class JavaSample {
 
@@ -19,30 +18,31 @@ public class JavaSample {
   }
 }
 class Sample extends BrowserStackLocalListener {
-  public static final String USERNAME = System.getenv("BROWSERSTACK_USERNAME");
-  public static final String AUTOMATE_KEY = System.getenv("BROWSERSTACK_ACCESS_KEY");
+  public static final String USERNAME = "BROWSERSTACK_USERNAME";
+  public static final String AUTOMATE_KEY = "BROWSERSTACK_ACCESS_KEY";
   public static final String URL = "http://" + USERNAME + ":" + AUTOMATE_KEY + "@hub.browserstack.com/wd/hub";
-  public static final String identifier = "qwerqwerqwer";
+  public static final String identifier = "TEST_IDENTIFIER";
 
   BrowserStackTunnel tunnel;
   WebDriver driver = null;
 
   public void startExample() {
     try {
-      this.tunnel = new BrowserStackTunnel();
+      this.tunnel = new BrowserStackTunnel(this.AUTOMATE_KEY);
     } catch(Exception e) {
       System.out.println(e);
     }
     this.tunnel.verboseMode();
-    this.tunnel.addArgs("localIdentifier", this.identifier);
-    this.tunnel.addArgs("qweqwe", "wer");
-    this.tunnel.addArgs("onlyAutomate", "true");
-    this.tunnel.addArgs("forcelocal", true);
-    //this.tunnel.addArgs("hosts", "localhost,3000,0");
-    this.tunnel.addArgs("verbose", true);
+    
+    BrowserStackTunnelOptions options = new BrowserStackTunnelOptions();
+    
+    options.add("localIdentifier", this.identifier);
+    options.add("onlyAutomate", true);
+    options.add("forcelocal", true);
+    options.add("verbose", true);
 
     try {
-      this.tunnel.start(this);
+      this.tunnel.start(this, options);
     } catch(Exception e) {
       System.out.println(e);
     }
@@ -70,14 +70,14 @@ class Sample extends BrowserStackLocalListener {
     caps.setCapability("browserstack.debug", "true");
     caps.setCapability("browserstack.localIdentifier", this.identifier);
     caps.setCapability("browserstack.local", "true");
-    caps.setCapability("build", "build");
+    caps.setCapability("build", "Java Sample Local test");
 
     try {
       this.driver = new RemoteWebDriver(new URL(URL), caps);
     } catch(Exception e) {
       System.out.println("Exception e: " + e);
     }
-    this.driver.get("http://localhost:3000");
+    this.driver.get("http://localhost:5000");
 
     System.out.println(this.driver.getTitle());
     System.out.println("Test complete. Trying to quit driver.");
