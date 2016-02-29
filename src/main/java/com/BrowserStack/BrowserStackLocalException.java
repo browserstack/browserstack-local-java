@@ -1,4 +1,4 @@
-package com.BS;
+package com.BrowserStack;
 
 class BrowserStackLocalException extends Exception
 

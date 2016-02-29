@@ -1,4 +1,4 @@
-package com.BS;
+package com.BrowserStack;
 
 /**
  * Hello world!

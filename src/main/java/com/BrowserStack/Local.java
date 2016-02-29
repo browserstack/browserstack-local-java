@@ -1,4 +1,4 @@
-package com.BS;
+package com.BrowserStack;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
