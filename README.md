@@ -1,11 +1,5 @@
 # browserstack-local-java
 
-## Setup
-
-```
-mvn install browserstack-local
-```
-
 ## API
 
 ### Constructor
