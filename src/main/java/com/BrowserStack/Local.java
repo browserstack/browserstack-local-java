@@ -14,10 +14,28 @@ import java.io.FileWriter;
 
 class Local {
   
-  Process BrowserStackLocal = null;
   List<String> command;
+  Process proc = null;
   String logFilePath;
   HashMap<String, String> parameters;
+
+  Local() throws Exception {
+    parameters = new HashMap<String, String>();
+    parameters.put("v","-vvv");
+    parameters.put("f","-f");
+    parameters.put("h","-h");
+    parameters.put("version", "-version"); 
+    parameters.put("force", "-force");
+    parameters.put("only", "-only");
+    parameters.put("forcelocal", "-forcelocal");
+    parameters.put("localIdentifier", "-localIdentifier");
+    parameters.put("onlyAutomate", "-onlyAutomate");
+    parameters.put("proxyHost", "-proxyHost");
+    parameters.put("proxyPort", "-proxyPort");
+    parameters.put("proxyUser", "-proxyUser");
+    parameters.put("proxyPass", "-proxyPass");
+    parameters.put("hosts", "-hosts");
+  }
   
   void start(HashMap<String,String> options) throws Exception {
     command = new ArrayList<String>();
@@ -29,15 +47,17 @@ class Local {
       LocalBinary lb = new LocalBinary();
       command.add(lb.binary_path);
     }
-      
+
     logFilePath = options.get("logfile") == null ? (System.getProperty("user.dir") + "/local.log") :  options.get("logfile");
     command.add("-logFile");
     command.add(logFilePath);
 
     command.add(options.get("key"));
     makeCommand(options);
+
+    if(options.get("onlyCommand") != null) return;
     
-    if (BrowserStackLocal == null){
+    if (proc == null){
       ProcessBuilder processBuilder = new ProcessBuilder(command);
 
       if((new File(logFilePath)).exists()){
@@ -46,7 +66,7 @@ class Local {
         f.close();
       }
 
-      BrowserStackLocal = processBuilder.start();
+      proc = processBuilder.start();
       FileReader f = new FileReader(logFilePath);
       BufferedReader reader = new BufferedReader(f);
       String string;
@@ -62,48 +82,33 @@ class Local {
         
         if (string.contains("*** Error")){
           f.close();
-          throw new BrowserStackLocalException(string);
+          stop();
+          throw new LocalException(string);
         }
       }
       
     }
   }
   
-  void stop(){
-    if (BrowserStackLocal != null) {
-      BrowserStackLocal.destroy();
+  void stop() throws InterruptedException {
+    if (proc != null) {
+      proc.destroy();
+      while(isRunning()){
+        Thread.sleep(1000);
+      }
     }
   }
   
   boolean isRunning(){
+    if(proc == null) return false;
+
     try {
-      BrowserStackLocal.exitValue();
-        return false;
+      proc.exitValue();
+      return false;
     }
-    catch (Exception e) {
-        return true;
+    catch (IllegalThreadStateException e){
+      return true;
     }
-  }
-  
-  void init(){
-    parameters = new HashMap<String, String>();
-    parameters.put("v","-v"); 
-    parameters.put("f","-f"); 
-    parameters.put("h","-h");
-    parameters.put("version", "-version"); 
-    parameters.put("force", "-force");
-    parameters.put("only", "-only");
-    parameters.put("forcelocal", "-forcelocal");
-    parameters.put("onlyAutomate", "-onlyAutomate");
-    parameters.put("proxyHost", "-proxyHost");
-    parameters.put("proxyPort", "-proxyPort");
-    parameters.put("proxyUser", "-proxyUser");
-    parameters.put("proxyPass", "-proxyPass");
-    parameters.put("hosts", "-hosts");
-  }
-  
-  Local() throws Exception {
-    init();
   }
   
   void makeCommand(HashMap<String,String> options){

@@ -1,55 +1,126 @@
 package com.BrowserStack;
 
-import java.net.URL;
 import java.util.HashMap;
-
 import org.junit.*;
+import static org.junit.Assert.*;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-
-public class BrowserStackLocalTest {  
-  private WebDriver driver;
+public class BrowserStackLocalTest {
   Local l; 
+  HashMap<String, String> options;
 
   @Before
   public void setUp() throws Exception {
-    String username = System.getenv("BROWSERSTACK_USER");
-    String access_key = System.getenv("BROWSERSTACK_ACCESS_KEY");
-
-    DesiredCapabilities caps = new DesiredCapabilities();
-    caps.setCapability("browser", "Firefox");
-    caps.setCapability("browser_version", "40.0");
-    caps.setCapability("os", "Windows");
-    caps.setCapability("os_version", "8.1");
-    caps.setCapability("browserstack.local", true);
-
     l = new Local();
-    HashMap<String, String> options = new HashMap<String, String>();
-    options.put("key", access_key);
-    //options.put("only", "localhost,80,0");
-    //options.put("forcelocal", "");
-    //options.put("proxyHost", "127.0.0.1");
-    //options.put("proxyPort", "8118");
-    //options.put("xyz", "qwerty");
-    l.start(options);
-
-    System.out.println("Starting session");
-    driver = new RemoteWebDriver(new URL("http://" + username + ":" + access_key + "@hub.browserstack.com/wd/hub"), caps);
-    System.out.println("Started session");
+    options = new HashMap<String, String>();
+    options.put("key", System.getenv("BROWSERSTACK_ACCESS_KEY"));
   }
 
   @Test
-  public void testSimple() throws Exception {  
-    driver.get("http://localhost");
-    System.out.println("Process is running : " + l.isRunning());
-    System.out.println("Page title is: " + driver.getTitle());
-  }  
+  public void testIsRunning() throws Exception {
+    assertFalse(l.isRunning());
+    l.start(options);
+    assertTrue(l.isRunning());
+  }
+
+  @Test
+  public void testMultipleBinary() throws Exception {
+    l.start(options);
+    assertTrue(l.isRunning());
+    Local l2 = new Local();
+    try {
+      l2.start(options);
+    }
+    catch(LocalException e){
+      assertFalse(l2.isRunning());
+    }
+  }
+
+  @Test
+  public void testEnableVerbose() throws Exception {
+    options.put("v", "");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-vvv"));
+  }
+
+  @Test
+  public void testSetFolder() throws Exception {
+    options.put("f", "/var/html");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-f"));
+    assertTrue(l.command.contains("/var/html"));
+  }
+
+  @Test
+  public void testEnableForce() throws Exception {
+    options.put("force", "");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-force"));
+  }
+
+  @Test
+  public void testEnableOnly() throws Exception {
+    options.put("only", "");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-only"));
+  }
+
+  @Test
+  public void testEnableOnlyAutomate() throws Exception {
+    options.put("onlyAutomate", "");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-onlyAutomate"));
+  }
+
+  @Test
+  public void testEnableForceLocal() throws Exception {
+    options.put("forcelocal", "");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-forcelocal"));
+  }
+
+  @Test
+  public void testSetLocalIdentifier() throws Exception {
+    options.put("localIdentifier", "abcdef");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-localIdentifier"));
+    assertTrue(l.command.contains("abcdef"));
+  }
+
+  @Test
+  public void testSetProxy() throws Exception {
+    options.put("proxyHost", "localhost");
+    options.put("proxyPort", "8080");
+    options.put("proxyUser", "user");
+    options.put("proxyPass", "pass");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("-proxyHost"));
+    assertTrue(l.command.contains("localhost"));
+    assertTrue(l.command.contains("-proxyPort"));
+    assertTrue(l.command.contains("8080"));
+    assertTrue(l.command.contains("-proxyUser"));
+    assertTrue(l.command.contains("user"));
+    assertTrue(l.command.contains("-proxyPass"));
+    assertTrue(l.command.contains("pass"));
+  }
+
+  @Test
+  public void testSetHosts() throws Exception {
+    options.put("hosts", "localhost,8000,0");
+    options.put("onlyCommand", "true");
+    l.start(options);
+    assertTrue(l.command.contains("localhost,8000,0"));
+  }
 
   @After
   public void tearDown() throws Exception {  
-      driver.quit();
-      l.stop();
+    l.stop();
   }  
 }

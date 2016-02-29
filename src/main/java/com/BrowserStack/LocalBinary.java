@@ -66,7 +66,7 @@ class LocalBinary {
       else
         i++;
     }
-    throw new BrowserStackLocalException("Error trying to download BrowserStackLocal binary");
+    throw new LocalException("Error trying to download BrowserStackLocal binary");
   }
 
   boolean makePath(String path) {
@@ -80,7 +80,7 @@ class LocalBinary {
     }
   }
 
-  Boolean downloadBinary(String dest_parent_dir) throws BrowserStackLocalException{
+  Boolean downloadBinary(String dest_parent_dir) throws LocalException{
     try{  
       if (!new File(dest_parent_dir).exists())
         new File(dest_parent_dir).mkdirs();
@@ -96,7 +96,7 @@ class LocalBinary {
       return true;
     }
     catch (Exception e){
-      throw new BrowserStackLocalException("Error trying to download BrowserStackLocal binary");
+      throw new LocalException("Error trying to download BrowserStackLocal binary");
     }
   }
 
