@@ -8,40 +8,61 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 class Local {
   
   Process BrowserStackLocal = null;
   List<String> command;
+  String logFilePath;
   HashMap<String, String> parameters;
   
   void start(HashMap<String,String> options) throws Exception {
-    LocalBinary lb = new LocalBinary();
     command = new ArrayList<String>();
-    command.add(lb.binary_path); 
-    command.add(options.get("key"));
+    
+    if(options.get("binarypath") != null){
+      command.add(options.get("binarypath")); 
+    }
+    else {
+      LocalBinary lb = new LocalBinary();
+      command.add(lb.binary_path);
+    }
+      
+    logFilePath = options.get("logfile") == null ? (System.getProperty("user.dir") + "/local.log") :  options.get("logfile");
+    command.add("-logFile");
+    command.add(logFilePath);
 
+    command.add(options.get("key"));
     makeCommand(options);
     
     if (BrowserStackLocal == null){
       ProcessBuilder processBuilder = new ProcessBuilder(command);
 
-      System.out.println("Setting up Local Testing connection...");
+      if((new File(logFilePath)).exists()){
+        FileWriter f = new FileWriter(logFilePath);
+        f.write("");
+        f.close();
+      }
+
       BrowserStackLocal = processBuilder.start();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(BrowserStackLocal.getInputStream()));
+      FileReader f = new FileReader(logFilePath);
+      BufferedReader reader = new BufferedReader(f);
       String string;
       int j = 0;
-      while ((string = reader.readLine()) != null) {
+      while (true) {
+        string = reader.readLine();
+        if(string == null) continue;
+
         if (string.equalsIgnoreCase("Press Ctrl-C to exit")) {
-          System.out.println("Local Testing connection has been established.");
+          f.close();
           break; 
         }
         
         if (string.contains("*** Error")){
+          f.close();
           throw new BrowserStackLocalException(string);
-        }
-        if (j++ > 20) {
-          throw new BrowserStackLocalException("Could not start BrowserStackLocal"); 
         }
       }
       
@@ -51,7 +72,6 @@ class Local {
   void stop(){
     if (BrowserStackLocal != null) {
       BrowserStackLocal.destroy();
-      System.out.println("Disconnected successfully");
     }
   }
   
@@ -80,7 +100,6 @@ class Local {
     parameters.put("proxyUser", "-proxyUser");
     parameters.put("proxyPass", "-proxyPass");
     parameters.put("hosts", "-hosts");
-    parameters.put("logfile", "-logfile");
   }
   
   Local() throws Exception {

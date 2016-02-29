@@ -41,7 +41,7 @@ class LocalBinary {
       else
         http_path="https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-ia32.zip";
   }
-  
+
   Boolean getBinary() throws Exception {
     dest_parent_dir = getAvailableDirectory();
     
@@ -56,7 +56,7 @@ class LocalBinary {
       return downloadBinary(dest_parent_dir);
       
   }
-  
+
   String getAvailableDirectory() throws Exception {
     int i=0;
     while(i<orderedPaths.length){
@@ -74,7 +74,6 @@ class LocalBinary {
       if (!new File(path).exists())
         new File(path).mkdirs();
       return true;
-      
     }
     catch (Exception e){
       return false;
@@ -86,33 +85,28 @@ class LocalBinary {
       if (!new File(dest_parent_dir).exists())
         new File(dest_parent_dir).mkdirs();
       
-      System.out.println("Downloading Local Testing binaries...");
       URL url = new URL(http_path);
       String source = dest_parent_dir + "/Download.zip";
       File f = new File(source);
       FileUtils.copyURLToFile(url, f);
       
-      System.out.println("Unzipping...");
       unzipFile(source, dest_parent_dir);
-      System.out.println("Changing permissions...");
       changePermissions(binary_path);
-      System.out.println("Download complete.");
       
       return true;
     }
     catch (Exception e){
-      System.out.println(e);
       throw new BrowserStackLocalException("Error trying to download BrowserStackLocal binary");
     }
   }
 
   void unzipFile(String source, String dest) {
     try {
-         ZipFile zipFile = new ZipFile(source);
-         zipFile.extractAll(dest);    
+      ZipFile zipFile = new ZipFile(source);
+      zipFile.extractAll(dest);    
     } 
     catch (ZipException e) {
-        e.printStackTrace();
+      e.printStackTrace();
     }
   }
   
