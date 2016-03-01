@@ -4,9 +4,6 @@ import java.io.File;
 import java.net.URL;
 import org.apache.commons.io.FileUtils;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-
 class LocalBinary {
   
   String http_path;
@@ -24,22 +21,22 @@ class LocalBinary {
     initialize();
     getBinary();
   }
-  
+
   void initialize(){
       osname = System.getProperty("os.name");
       arch = System.getProperty("os.arch");
 
       if(osname.contains("Mac") || osname.contains("Darwin"))
-        http_path="https://www.browserstack.com/browserstack-local/BrowserStackLocal-darwin-x64.zip";
+        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-darwin-x64";
       
       else if(osname.contains("Windows"))
-        http_path="https://www.browserstack.com/browserstack-local/BrowserStackLocal-win32.zip";
+        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal.exe";
       
       else if (osname.contains("Linux") && arch.contains("64"))
-        http_path="https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip";
+        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-x64";
       
       else
-        http_path="https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-ia32.zip";
+        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-ia32";
   }
 
   Boolean getBinary() throws Exception {
@@ -86,27 +83,17 @@ class LocalBinary {
         new File(dest_parent_dir).mkdirs();
       
       URL url = new URL(http_path);
-      String source = dest_parent_dir + "/Download.zip";
+      String source = dest_parent_dir + "/BrowserStackLocal";
+      if (osname.contains("Windows")) source = source + ".exe";
       File f = new File(source);
       FileUtils.copyURLToFile(url, f);
       
-      unzipFile(source, dest_parent_dir);
       changePermissions(binary_path);
       
       return true;
     }
     catch (Exception e){
       throw new LocalException("Error trying to download BrowserStackLocal binary");
-    }
-  }
-
-  void unzipFile(String source, String dest) {
-    try {
-      ZipFile zipFile = new ZipFile(source);
-      zipFile.extractAll(dest);    
-    } 
-    catch (ZipException e) {
-      e.printStackTrace();
     }
   }
   
