@@ -5,5 +5,4 @@ before_install:
 
 script: mvn -X clean test
 
-after_failre:
-  - cat /home/travis/build/browserstack/browserstack-local-java/target/surefire-reports/*
+after_failure: cat /home/travis/build/browserstack/browserstack-local-java/target/surefire-reports/*
