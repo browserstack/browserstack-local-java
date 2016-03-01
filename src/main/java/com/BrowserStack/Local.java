@@ -60,11 +60,9 @@ class Local {
     if (proc == null){
       ProcessBuilder processBuilder = new ProcessBuilder(command);
 
-      if((new File(logFilePath)).exists()){
-        FileWriter f = new FileWriter(logFilePath);
-        f.write("");
-        f.close();
-      }
+      FileWriter fw = new FileWriter(logFilePath);
+      fw.write("");
+      fw.close();
 
       proc = processBuilder.start();
       FileReader f = new FileReader(logFilePath);
