@@ -27,16 +27,16 @@ class LocalBinary {
       arch = System.getProperty("os.arch");
 
       if(osname.contains("Mac") || osname.contains("Darwin"))
-        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-darwin-x64";
+        http_path="https://s3.amazonaws.com/bs-automate-prod/local/BrowserStackLocal-darwin-x64";
       
       else if(osname.contains("Windows"))
-        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal.exe";
+        http_path="https://s3.amazonaws.com/bs-automate-prod/local/BrowserStackLocal-win32.exe";
       
       else if (osname.contains("Linux") && arch.contains("64"))
-        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-x64";
+        http_path="https://s3.amazonaws.com/bs-automate-prod/local/BrowserStackLocal-linux-x64";
       
       else
-        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-ia32";
+        http_path="https://s3.amazonaws.com/bs-automate-prod/local/BrowserStackLocal-linux-ia32";
   }
 
   Boolean getBinary() throws Exception {
