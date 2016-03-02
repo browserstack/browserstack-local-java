@@ -1,5 +1,7 @@
 # browserstack-local-java
 
+[![Build Status](https://travis-ci.org/browserstack/browserstack-local-java.svg?branch=master)](https://travis-ci.org/browserstack/browserstack-local-java)
+
 ## API
 
 ### Constructor
