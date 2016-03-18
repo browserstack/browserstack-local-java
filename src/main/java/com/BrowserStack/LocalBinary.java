@@ -30,7 +30,7 @@ class LocalBinary {
         http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-darwin-x64";
       
       else if(osname.contains("Windows"))
-        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-win32.exe";
+        http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal.exe";
       
       else if (osname.contains("Linux") && arch.contains("64"))
         http_path="https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-x64";
