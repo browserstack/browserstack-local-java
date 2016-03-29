@@ -6,7 +6,7 @@
 
 ### Constructor
 
-* `new BrowserStack::Local`: creates an instance of Local
+* `new Local()`: creates an instance of Local
 
 ### Methods
 
