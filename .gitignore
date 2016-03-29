@@ -11,3 +11,5 @@ buildNumber.properties
 *.class
 *.swp
 .project
+local.log
+
