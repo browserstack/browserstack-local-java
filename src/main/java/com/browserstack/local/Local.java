@@ -19,7 +19,7 @@ public class Local {
 
     private final Map<String, String> parameters;
 
-    public Local() throws Exception {
+    public Local() {
         parameters = new HashMap<String, String>();
         parameters.put("v", "-vvv");
         parameters.put("f", "-f");
