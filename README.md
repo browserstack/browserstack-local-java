@@ -35,7 +35,7 @@
 
 ## Build
 
-To build gem, `mvn compile`.
+To build run, `mvn compile`.
 
 
 ## Tests
