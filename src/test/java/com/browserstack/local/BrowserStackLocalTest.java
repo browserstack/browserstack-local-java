@@ -90,6 +90,14 @@ public class BrowserStackLocalTest {
     }
 
     @Test
+    public void testEnableForceProxy() throws Exception {
+        options.put("forceproxy", "");
+        options.put("onlyCommand", "true");
+        l.start(options);
+        assertTrue(l.command.contains("-forceproxy"));
+    }
+
+    @Test
     public void testSetLocalIdentifier() throws Exception {
         options.put("localIdentifier", "abcdef");
         options.put("onlyCommand", "true");

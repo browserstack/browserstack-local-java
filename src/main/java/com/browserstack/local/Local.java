@@ -23,8 +23,6 @@ public class Local {
         parameters = new HashMap<String, String>();
         parameters.put("v", "-vvv");
         parameters.put("f", "-f");
-        parameters.put("h", "-h");
-        parameters.put("version", "-version");
         parameters.put("force", "-force");
         parameters.put("only", "-only");
         parameters.put("forcelocal", "-forcelocal");
@@ -34,6 +32,7 @@ public class Local {
         parameters.put("proxyPort", "-proxyPort");
         parameters.put("proxyUser", "-proxyUser");
         parameters.put("proxyPass", "-proxyPass");
+        parameters.put("forceproxy", "-forceproxy");
         parameters.put("hosts", "-hosts");
     }
 
