@@ -23,8 +23,6 @@ public class Local {
         parameters = new HashMap<String, String>();
         parameters.put("v", "-vvv");
         parameters.put("f", "-f");
-        parameters.put("h", "-h");
-        parameters.put("version", "-version");
         parameters.put("force", "-force");
         parameters.put("only", "-only");
         parameters.put("forcelocal", "-forcelocal");
