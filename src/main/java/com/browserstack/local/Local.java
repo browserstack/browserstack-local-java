@@ -21,19 +21,19 @@ public class Local {
 
     public Local() {
         parameters = new HashMap<String, String>();
-        parameters.put("v", "-vvv");
-        parameters.put("f", "-f");
-        parameters.put("force", "-force");
-        parameters.put("only", "-only");
-        parameters.put("forcelocal", "-forcelocal");
-        parameters.put("localIdentifier", "-localIdentifier");
-        parameters.put("onlyAutomate", "-onlyAutomate");
-        parameters.put("proxyHost", "-proxyHost");
-        parameters.put("proxyPort", "-proxyPort");
-        parameters.put("proxyUser", "-proxyUser");
-        parameters.put("proxyPass", "-proxyPass");
-        parameters.put("forceproxy", "-forceproxy");
-        parameters.put("hosts", "-hosts");
+        parameters.put("-v", "-vvv");
+        parameters.put("-f", "-f");
+        parameters.put("-force", "-force");
+        parameters.put("-only", "-only");
+        parameters.put("-forcelocal", "-forcelocal");
+        parameters.put("-localIdentifier", "-localIdentifier");
+        parameters.put("-onlyAutomate", "-onlyAutomate");
+        parameters.put("-proxyHost", "-proxyHost");
+        parameters.put("-proxyPort", "-proxyPort");
+        parameters.put("-proxyUser", "-proxyUser");
+        parameters.put("-proxyPass", "-proxyPass");
+        parameters.put("-forceproxy", "-forceproxy");
+        parameters.put("-hosts", "-hosts");
     }
 
     /**
@@ -57,7 +57,7 @@ public class Local {
         command.add("-logFile");
         command.add(logFilePath);
 
-        command.add(options.get("key"));
+        command.add(options.get("-key"));
         makeCommand(options);
 
         if (options.get("onlyCommand") != null) return;
