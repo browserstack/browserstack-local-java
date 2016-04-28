@@ -132,6 +132,29 @@ public class BrowserStackLocalTest {
         assertTrue(l.command.contains("localhost,8000,0"));
     }
 
+    @Test
+    public void testCustomArguments() throws Exception {
+        options.put("-customKey", "customValue");
+        options.put("-customKey2", "customValue2");
+        options.put("onlyCommand", "true");
+        l.start(options);
+        assertTrue(l.command.contains("-customKey"));
+        assertTrue(l.command.contains("customValue"));
+        assertTrue(l.command.contains("-customKey2"));
+        assertTrue(l.command.contains("customValue2"));
+    }
+
+
+    @Test
+    public void testCustomBoolArguments() throws Exception {
+        options.put("-customKey", "");
+        options.put("-customKey2", "");
+        options.put("onlyCommand", "true");
+        l.start(options);
+        assertTrue(l.command.contains("-customKey"));
+        assertTrue(l.command.contains("-customKey2"));
+    }
+
     @After
     public void tearDown() throws Exception {
         l.stop();

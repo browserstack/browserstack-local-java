@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -45,14 +46,14 @@ public class Local {
     public void start(Map<String, String> options) throws Exception {
         command = new ArrayList<String>();
 
-        if (options.get("binarypath") != null) {
-            command.add(options.get("binarypath"));
+        if (options.get("-binarypath") != null) {
+            command.add(options.get("-binarypath"));
         } else {
             LocalBinary lb = new LocalBinary();
             command.add(lb.getBinaryPath());
         }
 
-        String logFilePath = options.get("logfile") == null ?
+        String logFilePath = options.get("-logfile") == null ?
                 (System.getProperty("user.dir") + "/local.log") : options.get("logfile");
         command.add("-logFile");
         command.add(logFilePath);
@@ -130,13 +131,18 @@ public class Local {
      */
     private void makeCommand(Map<String, String> options) {
         for (Map.Entry<String, String> opt : options.entrySet()) {
+            List<String> ignoreKeys = Arrays.asList("-key", "-logfile", "-binarypath");
             String parameter = opt.getKey().trim();
+            if (ignoreKeys.contains(parameter)) {
+                continue;
+            }
             if (parameters.get(parameter) != null) {
                 command.add(parameters.get(parameter));
-
-                if (opt.getValue() != null) {
-                    command.add(opt.getValue().trim());
-                }
+            } else {
+                command.add(parameter);
+            }
+            if (opt.getValue() != null) {
+                command.add(opt.getValue().trim());
             }
         }
     }
