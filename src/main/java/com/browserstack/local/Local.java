@@ -22,19 +22,19 @@ public class Local {
 
     public Local() {
         parameters = new HashMap<String, String>();
-        parameters.put("-v", "-vvv");
-        parameters.put("-f", "-f");
-        parameters.put("-force", "-force");
-        parameters.put("-only", "-only");
-        parameters.put("-forcelocal", "-forcelocal");
-        parameters.put("-localIdentifier", "-localIdentifier");
-        parameters.put("-onlyAutomate", "-onlyAutomate");
-        parameters.put("-proxyHost", "-proxyHost");
-        parameters.put("-proxyPort", "-proxyPort");
-        parameters.put("-proxyUser", "-proxyUser");
-        parameters.put("-proxyPass", "-proxyPass");
-        parameters.put("-forceproxy", "-forceproxy");
-        parameters.put("-hosts", "-hosts");
+        parameters.put("v", "-vvv");
+        parameters.put("f", "-f");
+        parameters.put("force", "-force");
+        parameters.put("only", "-only");
+        parameters.put("forcelocal", "-forcelocal");
+        parameters.put("localIdentifier", "-localIdentifier");
+        parameters.put("onlyAutomate", "-onlyAutomate");
+        parameters.put("proxyHost", "-proxyHost");
+        parameters.put("proxyPort", "-proxyPort");
+        parameters.put("proxyUser", "-proxyUser");
+        parameters.put("proxyPass", "-proxyPass");
+        parameters.put("forceproxy", "-forceproxy");
+        parameters.put("hosts", "-hosts");
     }
 
     /**
@@ -46,19 +46,19 @@ public class Local {
     public void start(Map<String, String> options) throws Exception {
         command = new ArrayList<String>();
 
-        if (options.get("-binarypath") != null) {
-            command.add(options.get("-binarypath"));
+        if (options.get("binarypath") != null) {
+            command.add(options.get("binarypath"));
         } else {
             LocalBinary lb = new LocalBinary();
             command.add(lb.getBinaryPath());
         }
 
-        String logFilePath = options.get("-logfile") == null ?
+        String logFilePath = options.get("logfile") == null ?
                 (System.getProperty("user.dir") + "/local.log") : options.get("logfile");
         command.add("-logFile");
         command.add(logFilePath);
 
-        command.add(options.get("-key"));
+        command.add(options.get("key"));
         makeCommand(options);
 
         if (options.get("onlyCommand") != null) return;
@@ -131,7 +131,7 @@ public class Local {
      */
     private void makeCommand(Map<String, String> options) {
         for (Map.Entry<String, String> opt : options.entrySet()) {
-            List<String> ignoreKeys = Arrays.asList("-key", "-logfile", "-binarypath");
+            List<String> ignoreKeys = Arrays.asList("key", "logfile", "binarypath");
             String parameter = opt.getKey().trim();
             if (ignoreKeys.contains(parameter)) {
                 continue;
@@ -139,7 +139,7 @@ public class Local {
             if (parameters.get(parameter) != null) {
                 command.add(parameters.get(parameter));
             } else {
-                command.add(parameter);
+                command.add("-" + parameter);
             }
             if (opt.getValue() != null) {
                 command.add(opt.getValue().trim());
