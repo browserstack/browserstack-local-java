@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,19 +22,19 @@ public class Local {
 
     public Local() {
         parameters = new HashMap<String, String>();
-        parameters.put("-v", "-vvv");
-        parameters.put("-f", "-f");
-        parameters.put("-force", "-force");
-        parameters.put("-only", "-only");
-        parameters.put("-forcelocal", "-forcelocal");
-        parameters.put("-localIdentifier", "-localIdentifier");
-        parameters.put("-onlyAutomate", "-onlyAutomate");
-        parameters.put("-proxyHost", "-proxyHost");
-        parameters.put("-proxyPort", "-proxyPort");
-        parameters.put("-proxyUser", "-proxyUser");
-        parameters.put("-proxyPass", "-proxyPass");
-        parameters.put("-forceproxy", "-forceproxy");
-        parameters.put("-hosts", "-hosts");
+        parameters.put("v", "-vvv");
+        parameters.put("f", "-f");
+        parameters.put("force", "-force");
+        parameters.put("only", "-only");
+        parameters.put("forcelocal", "-forcelocal");
+        parameters.put("localIdentifier", "-localIdentifier");
+        parameters.put("onlyAutomate", "-onlyAutomate");
+        parameters.put("proxyHost", "-proxyHost");
+        parameters.put("proxyPort", "-proxyPort");
+        parameters.put("proxyUser", "-proxyUser");
+        parameters.put("proxyPass", "-proxyPass");
+        parameters.put("forceproxy", "-forceproxy");
+        parameters.put("hosts", "-hosts");
     }
 
     /**
@@ -57,7 +58,7 @@ public class Local {
         command.add("-logFile");
         command.add(logFilePath);
 
-        command.add(options.get("-key"));
+        command.add(options.get("key"));
         makeCommand(options);
 
         if (options.get("onlyCommand") != null) return;
@@ -130,13 +131,18 @@ public class Local {
      */
     private void makeCommand(Map<String, String> options) {
         for (Map.Entry<String, String> opt : options.entrySet()) {
+            List<String> ignoreKeys = Arrays.asList("key", "logfile", "binarypath");
             String parameter = opt.getKey().trim();
+            if (ignoreKeys.contains(parameter)) {
+                continue;
+            }
             if (parameters.get(parameter) != null) {
                 command.add(parameters.get(parameter));
-
-                if (opt.getValue() != null) {
-                    command.add(opt.getValue().trim());
-                }
+            } else {
+                command.add("-" + parameter);
+            }
+            if (opt.getValue() != null) {
+                command.add(opt.getValue().trim());
             }
         }
     }

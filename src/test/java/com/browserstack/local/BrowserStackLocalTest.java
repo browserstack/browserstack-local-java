@@ -18,7 +18,7 @@ public class BrowserStackLocalTest {
     public void setUp() throws Exception {
         l = new Local();
         options = new HashMap<String, String>();
-        options.put("-key", System.getenv("BROWSERSTACK_ACCESS_KEY"));
+        options.put("key", System.getenv("BROWSERSTACK_ACCESS_KEY"));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testEnableVerbose() throws Exception {
-        options.put("-v", "");
+        options.put("v", "true");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-vvv"));
@@ -50,7 +50,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testSetFolder() throws Exception {
-        options.put("-f", "/var/html");
+        options.put("f", "/var/html");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-f"));
@@ -59,7 +59,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testEnableForce() throws Exception {
-        options.put("-force", "");
+        options.put("force", "true");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-force"));
@@ -67,7 +67,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testEnableOnly() throws Exception {
-        options.put("-only", "");
+        options.put("only", "true");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-only"));
@@ -75,7 +75,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testEnableOnlyAutomate() throws Exception {
-        options.put("-onlyAutomate", "");
+        options.put("onlyAutomate", "true");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-onlyAutomate"));
@@ -83,7 +83,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testEnableForceLocal() throws Exception {
-        options.put("-forcelocal", "");
+        options.put("forcelocal", "true");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-forcelocal"));
@@ -91,7 +91,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testEnableForceProxy() throws Exception {
-        options.put("-forceproxy", "");
+        options.put("forceproxy", "true");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-forceproxy"));
@@ -99,7 +99,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testSetLocalIdentifier() throws Exception {
-        options.put("-localIdentifier", "abcdef");
+        options.put("localIdentifier", "abcdef");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-localIdentifier"));
@@ -108,10 +108,10 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testSetProxy() throws Exception {
-        options.put("-proxyHost", "localhost");
-        options.put("-proxyPort", "8080");
-        options.put("-proxyUser", "user");
-        options.put("-proxyPass", "pass");
+        options.put("proxyHost", "localhost");
+        options.put("proxyPort", "8080");
+        options.put("proxyUser", "user");
+        options.put("proxyPass", "pass");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("-proxyHost"));
@@ -126,10 +126,33 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testSetHosts() throws Exception {
-        options.put("-hosts", "localhost,8000,0");
+        options.put("hosts", "localhost,8000,0");
         options.put("onlyCommand", "true");
         l.start(options);
         assertTrue(l.command.contains("localhost,8000,0"));
+    }
+
+    @Test
+    public void testCustomArguments() throws Exception {
+        options.put("customKey", "customValue");
+        options.put("customKey2", "customValue2");
+        options.put("onlyCommand", "true");
+        l.start(options);
+        assertTrue(l.command.contains("-customKey"));
+        assertTrue(l.command.contains("customValue"));
+        assertTrue(l.command.contains("-customKey2"));
+        assertTrue(l.command.contains("customValue2"));
+    }
+
+
+    @Test
+    public void testCustomBoolArguments() throws Exception {
+        options.put("customKey1", "true");
+        options.put("customKey2", "true");
+        options.put("onlyCommand", "true");
+        l.start(options);
+        assertTrue(l.command.contains("-customKey1"));
+        assertTrue(l.command.contains("-customKey2"));
     }
 
     @After
