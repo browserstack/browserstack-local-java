@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/browserstack/browserstack-local-java.svg?branch=master)](https://travis-ci.org/browserstack/browserstack-local-java)
 
-A simple Java wrapper for BrowserStack Local Binary.
+Java bindings for BrowserStack Local.
 
 ## Example
 
