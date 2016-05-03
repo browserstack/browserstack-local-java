@@ -4,6 +4,11 @@
 
 Java bindings for BrowserStack Local.
 
+## Installation
+```
+mvn install browserstack-local
+```
+
 ## Example
 
 ```

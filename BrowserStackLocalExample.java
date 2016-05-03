@@ -1,4 +1,4 @@
-package com.BrowserStack;
+package com.browserstack;
 
 import java.net.URL;
 import java.util.HashMap;

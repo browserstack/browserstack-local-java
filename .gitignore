@@ -12,4 +12,5 @@ buildNumber.properties
 *.swp
 .project
 local.log
+settings.xml
 
