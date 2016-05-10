@@ -1,6 +1,7 @@
 package com.browserstack.local;
 
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.json.*;
 
 /**
  * Creates and manages a secure tunnel connection to BrowserStack.
@@ -15,6 +17,10 @@ import java.util.Map;
 public class Local {
 
     List<String> command;
+    Map<String, String> startOptions;
+    String binaryPath;
+    String logFilePath;
+    int pid = 0;
 
     private Process proc = null;
 
@@ -44,22 +50,16 @@ public class Local {
      * @throws Exception
      */
     public void start(Map<String, String> options) throws Exception {
-        command = new ArrayList<String>();
-
+        startOptions = options;
         if (options.get("binarypath") != null) {
-            command.add(options.get("binarypath"));
+            binaryPath = options.get("binarypath");
         } else {
             LocalBinary lb = new LocalBinary();
-            command.add(lb.getBinaryPath());
+            binaryPath = lb.getBinaryPath();
         }
 
-        String logFilePath = options.get("logfile") == null ?
-                (System.getProperty("user.dir") + "/local.log") : options.get("logfile");
-        command.add("-logFile");
-        command.add(logFilePath);
-
-        command.add(options.get("key"));
-        makeCommand(options);
+        logFilePath = options.get("logfile") == null ? (System.getProperty("user.dir") + "/local.log") : options.get("logfile");
+        makeCommand(options, "start");
 
         if (options.get("onlyCommand") != null) return;
 
@@ -71,26 +71,24 @@ public class Local {
             fw.close();
 
             proc = processBuilder.start();
-            FileReader f = new FileReader(logFilePath);
-            BufferedReader reader = new BufferedReader(f);
-            String string;
-
-            while (true) {
-                string = reader.readLine();
-                if (string == null) continue;
-
-                if (string.equalsIgnoreCase("Press Ctrl-C to exit")) {
-                    f.close();
-                    break;
-                }
-
-                if (string.contains("*** Error")) {
-                    f.close();
-                    stop();
-                    throw new LocalException(string);
-                }
+            BufferedReader stdoutbr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            BufferedReader stderrbr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            String stdout="", stderr="", line;
+            while ((line = stdoutbr.readLine()) != null) {
+                stdout += line;
             }
+            while ((line = stderrbr.readLine()) != null) {
+                stderr += line;
+            }
+            int r = proc.waitFor();
 
+            JSONObject obj = new JSONObject(stdout != "" ? stdout : stderr);
+            if(!obj.getString("state").equals("connected")){
+                throw new LocalException(obj.getString("message"));
+            }
+            else {
+                pid = obj.getInt("pid");
+            }
         }
     }
 
@@ -99,12 +97,13 @@ public class Local {
      *
      * @throws InterruptedException
      */
-    public void stop() throws InterruptedException {
-        if (proc != null) {
-            proc.destroy();
-            while (isRunning()) {
-                Thread.sleep(1000);
-            }
+    public void stop() throws Exception {
+        if (pid != 0) {
+            makeCommand(startOptions, "stop");
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            proc = processBuilder.start();
+            proc.waitFor();
+            pid = 0;
         }
     }
 
@@ -113,15 +112,9 @@ public class Local {
      *
      * @return true if Local instance is running, else false
      */
-    public boolean isRunning() {
-        if (proc == null) return false;
-
-        try {
-            proc.exitValue();
-            return false;
-        } catch (IllegalThreadStateException e) {
-            return true;
-        }
+    public boolean isRunning() throws Exception {
+        if (pid == 0) return false;
+        return isProcessRunning(pid);
     }
 
     /**
@@ -129,7 +122,15 @@ public class Local {
      *
      * @param options Options supplied for the Local instance
      */
-    private void makeCommand(Map<String, String> options) {
+    private void makeCommand(Map<String, String> options, String opCode) {
+        command = new ArrayList<String>();
+        command.add(binaryPath);
+        command.add("-d");
+        command.add(opCode);
+        command.add("-logFile");
+        command.add(logFilePath);
+        command.add(options.get("key"));
+
         for (Map.Entry<String, String> opt : options.entrySet()) {
             List<String> ignoreKeys = Arrays.asList("key", "logfile", "binarypath");
             String parameter = opt.getKey().trim();
@@ -145,5 +146,35 @@ public class Local {
                 command.add(opt.getValue().trim());
             }
         }
+    }
+
+    /**
+     * Checks if process with pid is running
+     *
+     * @param options Options supplied for the Local instance
+     * @link http://stackoverflow.com/a/26423642/941691
+     */
+    private boolean isProcessRunning(int pid) throws Exception {
+        ArrayList<String> cmd = new ArrayList<String>();
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            //tasklist exit code is always 0. Parse output
+            //findstr exit code 0 if found pid, 1 if it doesn't
+            cmd.add("cmd");
+            cmd.add("/c");
+            cmd.add("\"tasklist /FI \"PID eq " + pid + "\" | findstr " + pid + "\"");
+        }
+        else {
+            //ps exit code 0 if process exists, 1 if it doesn't
+            cmd.add("ps");
+            cmd.add("-p");
+            cmd.add(String.valueOf(pid));
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+        proc = processBuilder.start();
+        int exitValue = proc.waitFor();
+
+        // 0 is the default exit code which means the process exists
+        return exitValue == 0;
     }
 }
