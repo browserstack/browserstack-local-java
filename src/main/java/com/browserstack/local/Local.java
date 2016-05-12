@@ -13,6 +13,8 @@ import org.json.*;
  */
 public class Local {
 
+    private static final List<String> IGNORE_KEYS = Arrays.asList("key", "logfile", "binarypath");
+
     List<String> command;
     Map<String, String> startOptions;
     String binaryPath;
@@ -126,9 +128,8 @@ public class Local {
         command.add(options.get("key"));
 
         for (Map.Entry<String, String> opt : options.entrySet()) {
-            List<String> ignoreKeys = Arrays.asList("key", "logfile", "binarypath");
             String parameter = opt.getKey().trim();
-            if (ignoreKeys.contains(parameter)) {
+            if (IGNORE_KEYS.contains(parameter)) {
                 continue;
             }
             if (parameters.get(parameter) != null) {
