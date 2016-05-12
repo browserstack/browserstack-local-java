@@ -145,7 +145,7 @@ public class Local {
     /**
      * Checks if process with pid is running
      *
-     * @param options Options supplied for the Local instance
+     * @param pid pid for the process to be checked.
      * @link http://stackoverflow.com/a/26423642/941691
      */
     private boolean isProcessRunning(int pid) throws Exception {
