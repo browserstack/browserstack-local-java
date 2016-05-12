@@ -79,7 +79,7 @@ public class Local {
             }
             int r = proc.waitFor();
 
-            JSONObject obj = new JSONObject(stdout != "" ? stdout : stderr);
+            JSONObject obj = new JSONObject(!stdout.equals("") ? stdout : stderr);
             if(!obj.getString("state").equals("connected")){
                 throw new LocalException(obj.getString("message"));
             }
