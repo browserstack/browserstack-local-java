@@ -183,18 +183,15 @@ public class Local {
         final Process process = processBuilder.start();
 
         return new LocalProcess() {
-            @Override
             public InputStream getInputStream() {
                 return process.getInputStream();
             }
 
-            @Override
             public InputStream getErrorStream() {
                 return process.getErrorStream();
             }
 
-            @Override
-            public int waitFor() throws InterruptedException {
+            public int waitFor() throws Exception {
                 return process.waitFor();
             }
         };
@@ -205,6 +202,6 @@ public class Local {
 
         InputStream getErrorStream();
 
-        int waitFor() throws InterruptedException;
+        int waitFor() throws Exception;
     }
 }
