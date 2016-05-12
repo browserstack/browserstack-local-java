@@ -1,9 +1,6 @@
 package com.browserstack.local;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -22,7 +19,7 @@ public class Local {
     String logFilePath;
     int pid = 0;
 
-    private Process proc = null;
+    private LocalProcess proc = null;
 
     private final Map<String, String> parameters;
 
@@ -64,13 +61,11 @@ public class Local {
         if (options.get("onlyCommand") != null) return;
 
         if (proc == null) {
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-
             FileWriter fw = new FileWriter(logFilePath);
             fw.write("");
             fw.close();
 
-            proc = processBuilder.start();
+            proc = runCommand(command);
             BufferedReader stdoutbr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             BufferedReader stderrbr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             String stdout="", stderr="", line;
@@ -100,8 +95,7 @@ public class Local {
     public void stop() throws Exception {
         if (pid != 0) {
             makeCommand(startOptions, "stop");
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            proc = processBuilder.start();
+            proc = runCommand(command);
             proc.waitFor();
             pid = 0;
         }
@@ -170,11 +164,47 @@ public class Local {
             cmd.add(String.valueOf(pid));
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-        proc = processBuilder.start();
+        proc = runCommand(cmd);
         int exitValue = proc.waitFor();
 
         // 0 is the default exit code which means the process exists
         return exitValue == 0;
+    }
+
+    /**
+     * Executes the supplied command on the shell.
+     *
+     * @param command Command to be executed on the shell.
+     * @return {@link LocalProcess} for managing the launched process.
+     * @throws IOException
+     */
+    protected LocalProcess runCommand(List<String> command) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        final Process process = processBuilder.start();
+
+        return new LocalProcess() {
+            @Override
+            public InputStream getInputStream() {
+                return process.getInputStream();
+            }
+
+            @Override
+            public InputStream getErrorStream() {
+                return process.getErrorStream();
+            }
+
+            @Override
+            public int waitFor() throws InterruptedException {
+                return process.waitFor();
+            }
+        };
+    }
+
+    public interface LocalProcess {
+        InputStream getInputStream();
+
+        InputStream getErrorStream();
+
+        int waitFor() throws InterruptedException;
     }
 }
