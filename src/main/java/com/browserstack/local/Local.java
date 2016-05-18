@@ -18,7 +18,6 @@ public class Local {
     List<String> command;
     Map<String, String> startOptions;
     String binaryPath;
-    String logFilePath;
     int pid = 0;
 
     private LocalProcess proc = null;
@@ -57,16 +56,11 @@ public class Local {
             binaryPath = lb.getBinaryPath();
         }
 
-        logFilePath = options.get("logfile") == null ? (System.getProperty("user.dir") + "/local.log") : options.get("logfile");
         makeCommand(options, "start");
 
         if (options.get("onlyCommand") != null) return;
 
         if (proc == null) {
-            FileWriter fw = new FileWriter(logFilePath);
-            fw.write("");
-            fw.close();
-
             proc = runCommand(command);
             BufferedReader stdoutbr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             BufferedReader stderrbr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
@@ -123,8 +117,6 @@ public class Local {
         command.add(binaryPath);
         command.add("-d");
         command.add(opCode);
-        command.add("-logFile");
-        command.add(logFilePath);
         command.add(options.get("key"));
 
         for (Map.Entry<String, String> opt : options.entrySet()) {
