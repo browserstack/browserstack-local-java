@@ -13,7 +13,7 @@ import org.json.*;
  */
 public class Local {
 
-    private static final List<String> IGNORE_KEYS = Arrays.asList("key", "logfile", "binarypath");
+    private static final List<String> IGNORE_KEYS = Arrays.asList("key", "binarypath");
 
     List<String> command;
     Map<String, String> startOptions;
