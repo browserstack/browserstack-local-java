@@ -1,9 +1,6 @@
 package com.browserstack.local;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -16,13 +13,14 @@ import org.json.*;
  */
 public class Local {
 
+    private static final List<String> IGNORE_KEYS = Arrays.asList("key", "binarypath");
+
     List<String> command;
     Map<String, String> startOptions;
     String binaryPath;
-    String logFilePath;
     int pid = 0;
 
-    private Process proc = null;
+    private LocalProcess proc = null;
 
     private final Map<String, String> parameters;
 
@@ -58,19 +56,12 @@ public class Local {
             binaryPath = lb.getBinaryPath();
         }
 
-        logFilePath = options.get("logfile") == null ? (System.getProperty("user.dir") + "/local.log") : options.get("logfile");
         makeCommand(options, "start");
 
         if (options.get("onlyCommand") != null) return;
 
         if (proc == null) {
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-
-            FileWriter fw = new FileWriter(logFilePath);
-            fw.write("");
-            fw.close();
-
-            proc = processBuilder.start();
+            proc = runCommand(command);
             BufferedReader stdoutbr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             BufferedReader stderrbr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             String stdout="", stderr="", line;
@@ -82,7 +73,7 @@ public class Local {
             }
             int r = proc.waitFor();
 
-            JSONObject obj = new JSONObject(stdout != "" ? stdout : stderr);
+            JSONObject obj = new JSONObject(!stdout.equals("") ? stdout : stderr);
             if(!obj.getString("state").equals("connected")){
                 throw new LocalException(obj.getString("message"));
             }
@@ -100,8 +91,7 @@ public class Local {
     public void stop() throws Exception {
         if (pid != 0) {
             makeCommand(startOptions, "stop");
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            proc = processBuilder.start();
+            proc = runCommand(command);
             proc.waitFor();
             pid = 0;
         }
@@ -127,14 +117,11 @@ public class Local {
         command.add(binaryPath);
         command.add("-d");
         command.add(opCode);
-        command.add("-logFile");
-        command.add(logFilePath);
         command.add(options.get("key"));
 
         for (Map.Entry<String, String> opt : options.entrySet()) {
-            List<String> ignoreKeys = Arrays.asList("key", "logfile", "binarypath");
             String parameter = opt.getKey().trim();
-            if (ignoreKeys.contains(parameter)) {
+            if (IGNORE_KEYS.contains(parameter)) {
                 continue;
             }
             if (parameters.get(parameter) != null) {
@@ -151,7 +138,7 @@ public class Local {
     /**
      * Checks if process with pid is running
      *
-     * @param options Options supplied for the Local instance
+     * @param pid pid for the process to be checked.
      * @link http://stackoverflow.com/a/26423642/941691
      */
     private boolean isProcessRunning(int pid) throws Exception {
@@ -170,11 +157,44 @@ public class Local {
             cmd.add(String.valueOf(pid));
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-        proc = processBuilder.start();
+        proc = runCommand(cmd);
         int exitValue = proc.waitFor();
 
         // 0 is the default exit code which means the process exists
         return exitValue == 0;
+    }
+
+    /**
+     * Executes the supplied command on the shell.
+     *
+     * @param command Command to be executed on the shell.
+     * @return {@link LocalProcess} for managing the launched process.
+     * @throws IOException
+     */
+    protected LocalProcess runCommand(List<String> command) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        final Process process = processBuilder.start();
+
+        return new LocalProcess() {
+            public InputStream getInputStream() {
+                return process.getInputStream();
+            }
+
+            public InputStream getErrorStream() {
+                return process.getErrorStream();
+            }
+
+            public int waitFor() throws Exception {
+                return process.waitFor();
+            }
+        };
+    }
+
+    public interface LocalProcess {
+        InputStream getInputStream();
+
+        InputStream getErrorStream();
+
+        int waitFor() throws Exception;
     }
 }
