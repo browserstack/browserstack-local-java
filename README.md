@@ -5,8 +5,15 @@
 Java bindings for BrowserStack Local.
 
 ## Installation
+
+Add the following to pom.xml
 ```
-mvn install browserstack-local
+<!-- http://mvnrepository.com/artifact/com.browserstack/browserstack-local-java -->
+<dependency>
+    <groupId>com.browserstack</groupId>
+    <artifactId>browserstack-local-java</artifactId>
+    <version>0.3.0</version>
+</dependency>
 ```
 
 ## Example
