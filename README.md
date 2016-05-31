@@ -17,7 +17,7 @@ Add this dependency to your project's POM:
 
 ## Example
 
-```
+```java
 import com.browserstack.local.Local;
 
 # creates an instance of Local
@@ -43,31 +43,31 @@ Apart from the key, all other BrowserStack Local modifiers are optional. For the
 
 #### Verbose Logging
 To enable verbose logging -
-```
+```java
 bsLocalArgs.put("v", "true");
 ```
 
 #### Folder Testing
 To test local folder rather internal server, provide path to folder as value of this option -
-```
+```java
 bsLocalArgs.put("f", "/my/awesome/folder");
 ```
 
 #### Force Start
 To kill other running Browserstack Local instances -
-```
+```java
 bsLocalArgs.put("force", "true");
 ```
 
 #### Only Automate
 To disable local testing for Live and Screenshots, and enable only Automate -
-```
+```java
 bsLocalArgs.put("onlyAutomate", "true");
 ```
 
 #### Force Local
 To route all traffic via local(your) machine -
-```
+```java
 bsLocalArgs.put("forcelocal", "true");
 ```
 
@@ -79,7 +79,7 @@ To use a proxy for local testing -
 * proxyUser: Username for connecting to proxy (Basic Auth Only)
 * proxyPass: Password for USERNAME, will be ignored if USERNAME is empty or not specified
 
-```
+```java
 bsLocalArgs.put("proxyHost", "127.0.0.1");
 bsLocalArgs.put("proxyPort", "8000");
 bsLocalArgs.put("proxyUser", "user");
@@ -88,7 +88,7 @@ bsLocalArgs.put("proxyPass", "password");
 
 #### Local Identifier
 If doing simultaneous multiple local testing connections, set this uniquely for different processes -
-```
+```java
 bsLocalArgs.put("localIdentifier", "randomstring");
 ```
 
@@ -98,14 +98,14 @@ bsLocalArgs.put("localIdentifier", "randomstring");
 
 By default, BrowserStack local wrappers try downloading and executing the latest version of BrowserStack binary in ~/.browserstack or the present working directory or the tmp folder by order. But you can override these by passing the -binarypath argument.
 Path to specify local Binary path -
-```
+```java
 bsLocalArgs.put("binarypath", "/browserstack/BrowserStackLocal");
 ```
 
 #### Logfile
 To save the logs to the file while running with the '-v' argument, you can specify the path of the file. By default the logs are saved in the local.log file in the present woring directory.
 To specify the path to file where the logs will be saved -
-```
+```java
 bsLocalArgs.put("v", "true");
 bsLocalArgs.put("logfile", "/browserstack/logs.txt");
 ```
