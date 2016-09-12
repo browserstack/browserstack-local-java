@@ -23,22 +23,24 @@ public class Local {
     private LocalProcess proc = null;
 
     private final Map<String, String> parameters;
+    private final Map<String, String> avoidValueParameters;
 
     public Local() {
+        avoidValueParameters = new HashMap<String, String>();
+        avoidValueParameters.put("v", "-vvv");
+        avoidValueParameters.put("force", "-force");
+        avoidValueParameters.put("forcelocal", "-forcelocal");
+        avoidValueParameters.put("onlyAutomate", "-onlyAutomate");
+        avoidValueParameters.put("forceproxy", "-forceproxy");
+
         parameters = new HashMap<String, String>();
-        parameters.put("v", "-vvv");
         parameters.put("f", "-f");
-        parameters.put("force", "-force");
         parameters.put("only", "-only");
-        parameters.put("forcelocal", "-forcelocal");
         parameters.put("localIdentifier", "-localIdentifier");
-        parameters.put("onlyAutomate", "-onlyAutomate");
         parameters.put("proxyHost", "-proxyHost");
         parameters.put("proxyPort", "-proxyPort");
         parameters.put("proxyUser", "-proxyUser");
         parameters.put("proxyPass", "-proxyPass");
-        parameters.put("forceproxy", "-forceproxy");
-        parameters.put("hosts", "-hosts");
     }
 
     /**
@@ -124,13 +126,17 @@ public class Local {
             if (IGNORE_KEYS.contains(parameter)) {
                 continue;
             }
-            if (parameters.get(parameter) != null) {
-                command.add(parameters.get(parameter));
+            if (avoidValueParameters.get(parameter) != null && opt.getValue().trim().toLowerCase() != "false") {
+                command.add(avoidValueParameters.get(parameter));
             } else {
-                command.add("-" + parameter);
-            }
-            if (opt.getValue() != null) {
-                command.add(opt.getValue().trim());
+                if (parameters.get(parameter) != null) {
+                    command.add(parameters.get(parameter));
+                } else {
+                    command.add("-" + parameter);
+                }
+                if (opt.getValue() != null) {
+                    command.add(opt.getValue().trim());
+                }
             }
         }
     }
