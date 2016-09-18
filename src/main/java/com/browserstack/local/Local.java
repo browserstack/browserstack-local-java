@@ -77,7 +77,7 @@ public class Local {
 
             JSONObject obj = new JSONObject(!stdout.equals("") ? stdout : stderr);
             if(!obj.getString("state").equals("connected")){
-                throw new LocalException(obj.getString("message"));
+                throw new LocalException(obj.getJSONObject("message").getString("message"));
             }
             else {
                 pid = obj.getInt("pid");
