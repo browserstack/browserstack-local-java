@@ -12,7 +12,7 @@ public class BrowserStackLocalExample {
   Local l; 
 
   public static void main() throws Exception {
-    String username = System.getenv("BROWSERSTACK_USER");
+    String username = System.getenv("BROWSERSTACK_USERNAME");
     String access_key = System.getenv("BROWSERSTACK_ACCESS_KEY");
 
     DesiredCapabilities caps = new DesiredCapabilities();
