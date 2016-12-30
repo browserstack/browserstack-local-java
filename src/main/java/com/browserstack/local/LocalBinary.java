@@ -80,7 +80,7 @@ class LocalBinary {
 
             boolean validBinary = Pattern.matches("BrowserStack Local version \\d+\\.\\d+", stdout);
 
-            return binaryValid;
+            return validBinary;
         }catch(IOException ex){
             throw new LocalException(ex.toString());
         }
