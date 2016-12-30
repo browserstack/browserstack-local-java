@@ -65,9 +65,7 @@ class LocalBinary {
     }
 
     private boolean validateBinary() throws LocalException{
-        System.out.println("Validating binary at " + binaryPath);
         Process process;
-
         try {
 
             process = new ProcessBuilder(binaryPath,"--version").start();
