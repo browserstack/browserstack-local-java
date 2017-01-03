@@ -1,9 +1,12 @@
 package com.browserstack.local;
 
 import org.apache.commons.io.FileUtils;
-
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.File;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 class LocalBinary {
 
@@ -24,6 +27,7 @@ class LocalBinary {
     LocalBinary() throws LocalException {
         initialize();
         getBinary();
+        checkBinary();
     }
 
     private void initialize() throws LocalException {
@@ -43,6 +47,46 @@ class LocalBinary {
         }
 
         httpPath = BIN_URL + binFileName;
+    }
+
+    private void checkBinary() throws LocalException{
+        boolean binaryWorking = validateBinary();
+
+        if(!binaryWorking){
+            File binary_file = new File(binaryPath);
+            if (binary_file.exists()) {
+                binary_file.delete();
+            }
+            getBinary();
+            if(!validateBinary()){
+                throw new LocalException("BrowserStackLocal binary is corrupt");
+            }
+        }
+    }
+
+    private boolean validateBinary() throws LocalException{
+        Process process;
+        try {
+
+            process = new ProcessBuilder(binaryPath,"--version").start();
+
+            BufferedReader stdoutbr = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String stdout="",line="";
+
+            while ((line = stdoutbr.readLine()) != null) {
+                stdout += line;
+            }
+            process.waitFor();
+
+            boolean validBinary = Pattern.matches("BrowserStack Local version \\d+\\.\\d+", stdout);
+
+            return validBinary;
+        }catch(IOException ex){
+            throw new LocalException(ex.toString());
+        }
+        catch(InterruptedException ex){
+            throw new LocalException(ex.toString());
+        }
     }
 
     private void getBinary() throws LocalException {
