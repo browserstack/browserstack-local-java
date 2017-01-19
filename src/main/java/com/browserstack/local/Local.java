@@ -41,7 +41,7 @@ public class Local {
         parameters.put("proxyPort", "-proxyPort");
         parameters.put("proxyUser", "-proxyUser");
         parameters.put("proxyPass", "-proxyPass");
-        parameters.put("bsHost", "-bsHost");
+        parameters.put("bsHost", "--bs-host");
     }
 
     /**
