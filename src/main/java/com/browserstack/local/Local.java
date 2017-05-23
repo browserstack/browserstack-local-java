@@ -100,6 +100,23 @@ public class Local {
     }
 
     /**
+    * Stops the Local instance specified by the given identifier
+    * @param options Options supplied for the Local instance
+    **/
+    public void stop(Map<String, String> options) throws Exception {
+        if (options.get("binarypath") != null) {
+            binaryPath = options.get("binarypath");
+        } else {
+            LocalBinary lb = new LocalBinary();
+            binaryPath = lb.getBinaryPath();
+        }
+        makeCommand(options, "stop");
+        proc = runCommand(command);
+        proc.waitFor();
+        pid = 0;
+    }
+
+    /**
      * Checks if Local instance is running
      *
      * @return true if Local instance is running, else false
