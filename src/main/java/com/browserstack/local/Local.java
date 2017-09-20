@@ -2,6 +2,7 @@ package com.browserstack.local;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.List;
@@ -28,19 +29,19 @@ public class Local {
     public Local() {
         avoidValueParameters = new HashMap<String, String>();
         avoidValueParameters.put("v", "-vvv");
-        avoidValueParameters.put("force", "-force");
-        avoidValueParameters.put("forcelocal", "-forcelocal");
-        avoidValueParameters.put("onlyAutomate", "-onlyAutomate");
-        avoidValueParameters.put("forceproxy", "-forceproxy");
+        avoidValueParameters.put("force", "--force");
+        avoidValueParameters.put("forcelocal", "--force-local");
+        avoidValueParameters.put("onlyAutomate", "--only-automate ");
+        avoidValueParameters.put("forceproxy", "--force-proxy");
 
         parameters = new HashMap<String, String>();
         parameters.put("f", "-f");
-        parameters.put("only", "-only");
-        parameters.put("localIdentifier", "-localIdentifier");
-        parameters.put("proxyHost", "-proxyHost");
-        parameters.put("proxyPort", "-proxyPort");
-        parameters.put("proxyUser", "-proxyUser");
-        parameters.put("proxyPass", "-proxyPass");
+        parameters.put("only", "--only");
+        parameters.put("localIdentifier", "--local-identifier");
+        parameters.put("proxyHost", "--local-proxy-host");
+        parameters.put("proxyPort", "--local-proxy-port");
+        parameters.put("proxyUser", "--local-proxy-user");
+        parameters.put("proxyPass", "--local-proxy-pass");
     }
 
     /**
