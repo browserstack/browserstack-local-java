@@ -2,5 +2,6 @@ language: java
 
 jdk:
   - oraclejdk8
+  - openjdk7
 
 after_failure: cat /home/travis/build/browserstack/browserstack-local-java/target/surefire-reports/*
