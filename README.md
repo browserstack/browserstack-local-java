@@ -70,6 +70,11 @@ To route all traffic via local(your) machine -
 ```java
 bsLocalArgs.put("forcelocal", "true");
 ```
+#### Force Proxy
+To route all traffic via the proxy specified.
+```java
+bsLocalArgs.put("forceproxy", "true");
+```
 
 #### Proxy
 To use a proxy for local testing -
@@ -84,6 +89,20 @@ bsLocalArgs.put("proxyHost", "127.0.0.1");
 bsLocalArgs.put("proxyPort", "8000");
 bsLocalArgs.put("proxyUser", "user");
 bsLocalArgs.put("proxyPass", "password");
+```
+#### Local Proxy
+To use local proxy in local testing -
+
+* localProxyHost: Hostname/IP of proxy, remaining proxy options are ignored if this option is absent
+* localProxyPort: Port for the proxy, defaults to 8081 when -localProxyHost is used
+* localProxyUser: Username for connecting to proxy (Basic Auth Only)
+* localProxyPass: Password for USERNAME, will be ignored if USERNAME is empty or not specified
+
+```java
+bsLocalArgs.put("localProxyHost", "127.0.0.1");
+bsLocalArgs.put("localProxyPort", "8000");
+bsLocalArgs.put("-localProxyUser", "user");
+bsLocalArgs.put("-localProxyPass", "password");
 ```
 
 #### Local Identifier
