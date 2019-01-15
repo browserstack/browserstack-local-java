@@ -37,10 +37,6 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-        <repository>
-            <id>ossrh-releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
-        </repository>
     </distributionManagement>
 
     <dependencies>
@@ -92,7 +88,7 @@
                         <version>1.6.7</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh-releases</serverId>
+                            <serverId>ossrh</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
@@ -137,7 +133,7 @@
                 <version>1.6.7</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh-releases</serverId>
+                    <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
