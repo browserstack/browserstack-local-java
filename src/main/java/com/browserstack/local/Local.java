@@ -136,6 +136,7 @@ public class Local {
         command.add(binaryPath);
         command.add("-d");
         command.add(opCode);
+        command.add("--key");
         command.add(options.get("key"));
 
         for (Map.Entry<String, String> opt : options.entrySet()) {
