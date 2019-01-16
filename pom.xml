@@ -3,7 +3,7 @@
     <groupId>com.browserstack</groupId>
     <artifactId>browserstack-local-java</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
 
     <name>browserstack-local-java</name>
     <description>Java bindings for BrowserStack Local</description>
@@ -37,6 +37,10 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
     </distributionManagement>
 
     <dependencies>
@@ -135,7 +139,7 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
             <plugin>
