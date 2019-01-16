@@ -35,7 +35,7 @@
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </snapshotRepository>
     </distributionManagement>
 
