@@ -14,3 +14,4 @@ buildNumber.properties
 local.log
 settings.xml
 
+/target/
