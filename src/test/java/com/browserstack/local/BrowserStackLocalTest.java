@@ -23,6 +23,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testIsRunning() throws Exception {
+    	preconditionKeyExists();
         assertFalse(l.isRunning());
         l.start(options);
         assertTrue(l.isRunning());
@@ -30,6 +31,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testMultipleBinary() throws Exception {
+    	preconditionKeyExists();
         l.start(options);
         assertTrue(l.isRunning());
         Local l2 = new Local();
@@ -159,4 +161,8 @@ public class BrowserStackLocalTest {
     public void tearDown() throws Exception {
         l.stop();
     }
+    
+	private void preconditionKeyExists() {
+		assertTrue("The environment variable BROWSERSTACK_ACCESS_KEY must be set to run the tests.", System.getenv("BROWSERSTACK_ACCESS_KEY") != null );
+	}
 }
