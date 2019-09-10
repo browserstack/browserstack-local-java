@@ -105,6 +105,15 @@ bsLocalArgs.put("-localProxyUser", "user");
 bsLocalArgs.put("-localProxyPass", "password");
 ```
 
+#### PAC (Proxy Auto-Configuration)
+To use PAC (Proxy Auto-Configuration) in local testing -
+
+* pac-file: PAC (Proxy Auto-Configuration) file’s absolute path
+
+```java
+bsLocalArgs.put("-pac-file", "<pac_file_abs_path>");
+```
+
 #### Local Identifier
 If doing simultaneous multiple local testing connections, set this uniquely for different processes -
 ```java
