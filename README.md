@@ -135,7 +135,7 @@ To save the logs to the file while running with the '-v' argument, you can speci
 To specify the path to file where the logs will be saved -
 ```java
 bsLocalArgs.put("v", "true");
-bsLocalArgs.put("logfile", "/browserstack/logs.txt");
+bsLocalArgs.put("-log-file", "/browserstack/logs.txt");
 ```
 
 ## Contribute
