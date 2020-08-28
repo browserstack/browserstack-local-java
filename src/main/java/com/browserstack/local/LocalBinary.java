@@ -40,13 +40,29 @@ class LocalBinary {
         } else if (osname.contains("mac") || osname.contains("darwin")) {
             binFileName = "BrowserStackLocal-darwin-x64";
         } else if (osname.contains("linux")) {
-            String arch = System.getProperty("os.arch");
-            binFileName = "BrowserStackLocal-linux-" + (arch.contains("64") ? "x64" : "ia32");
+            if (isAlpine()) {
+                binFileName = "BrowserStackLocal-alpine";
+            } else {
+                String arch = System.getProperty("os.arch");
+                binFileName = "BrowserStackLocal-linux-" + (arch.contains("64") ? "x64" : "ia32");
+            }
         } else {
             throw new LocalException("Failed to detect OS type");
         }
 
         httpPath = BIN_URL + binFileName;
+    }
+
+    private boolean isAlpine() {
+        String[] cmd = { "/bin/sh", "-c", "grep -w \"NAME\" /etc/os-release" };
+        try {
+            Process os = Runtime.getRuntime().exec(cmd);
+            BufferedReader stdout = new BufferedReader(new InputStreamReader(os.getInputStream()));
+
+            return stdout.readLine().contains("Alpine");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void checkBinary() throws LocalException{
