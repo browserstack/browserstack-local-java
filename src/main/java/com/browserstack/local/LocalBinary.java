@@ -55,13 +55,15 @@ class LocalBinary {
 
     private boolean isAlpine() {
         String[] cmd = { "/bin/sh", "-c", "grep -w \"NAME\" /etc/os-release" };
+        boolean flag = false;
+
         try {
             Process os = Runtime.getRuntime().exec(cmd);
             BufferedReader stdout = new BufferedReader(new InputStreamReader(os.getInputStream()));
 
-            return stdout.readLine().contains("Alpine");
-        } catch (Exception e) {
-            return false;
+            flag = stdout.readLine().contains("Alpine");
+        } finally {
+            return flag;
         }
     }
 
