@@ -3,7 +3,7 @@
     <groupId>com.browserstack</groupId>
     <artifactId>browserstack-local-java</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
 
     <name>browserstack-local-java</name>
     <description>Java bindings for BrowserStack Local</description>
@@ -59,6 +59,11 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160212</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.3.9</version>
         </dependency>
     </dependencies>
 

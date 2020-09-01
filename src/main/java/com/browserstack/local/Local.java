@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.json.*;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 /**
  * Creates and manages a secure tunnel connection to BrowserStack.
@@ -131,13 +133,18 @@ public class Local {
      *
      * @param options Options supplied for the Local instance
      */
-    private void makeCommand(Map<String, String> options, String opCode) {
+    private void makeCommand(Map<String, String> options, String opCode) throws Exception {
         command = new ArrayList<String>();
         command.add(binaryPath);
         command.add("-d");
         command.add(opCode);
         command.add("--key");
         command.add(options.get("key"));
+
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = reader.read(new FileReader("pom.xml"));
+        command.add("--source");
+        command.add("java-" + model.getVersion());
 
         for (Map.Entry<String, String> opt : options.entrySet()) {
             String parameter = opt.getKey().trim();
