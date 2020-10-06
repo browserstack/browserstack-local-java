@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 class LocalBinary {
 
-    private static final String BIN_URL = "https://s3.amazonaws.com/browserStack/browserstack-local/";
+    private static final String BIN_URL = "https://bstack-local-prod.s3.amazonaws.com/";
 
     private String httpPath;
 
@@ -41,12 +41,34 @@ class LocalBinary {
             binFileName = "BrowserStackLocal-darwin-x64";
         } else if (osname.contains("linux")) {
             String arch = System.getProperty("os.arch");
-            binFileName = "BrowserStackLocal-linux-" + (arch.contains("64") ? "x64" : "ia32");
+            if (arch.contains("64")) {
+                if (isAlpine()) {
+                    binFileName = "BrowserStackLocal-alpine";
+                } else {
+                    binFileName = "BrowserStackLocal-linux-x64";
+                }
+            } else {
+                binFileName = "BrowserStackLocal-linux-ia32";
+            }
         } else {
             throw new LocalException("Failed to detect OS type");
         }
 
         httpPath = BIN_URL + binFileName;
+    }
+
+    private boolean isAlpine() {
+        String[] cmd = { "/bin/sh", "-c", "grep -w \"NAME\" /etc/os-release" };
+        boolean flag = false;
+
+        try {
+            Process os = Runtime.getRuntime().exec(cmd);
+            BufferedReader stdout = new BufferedReader(new InputStreamReader(os.getInputStream()));
+
+            flag = stdout.readLine().contains("Alpine");
+        } finally {
+            return flag;
+        }
     }
 
     private void checkBinary() throws LocalException{

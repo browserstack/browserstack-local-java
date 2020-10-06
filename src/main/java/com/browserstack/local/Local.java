@@ -22,6 +22,8 @@ public class Local {
 
     private LocalProcess proc = null;
 
+    // Current version of binding package, used for --source option of binary
+    private final String packageVersion = "1.0.6";
     private final Map<String, String> parameters;
     private final Map<String, String> avoidValueParameters;
 
@@ -138,6 +140,8 @@ public class Local {
         command.add(opCode);
         command.add("--key");
         command.add(options.get("key"));
+        command.add("--source");
+        command.add("java-" + packageVersion);
 
         for (Map.Entry<String, String> opt : options.entrySet()) {
             String parameter = opt.getKey().trim();
@@ -176,8 +180,14 @@ public class Local {
         }
         else {
             //ps exit code 0 if process exists, 1 if it doesn't
+            cmd.add("/bin/sh");
+            cmd.add("-c");
             cmd.add("ps");
-            cmd.add("-p");
+            cmd.add("-o");
+            cmd.add("pid=");
+            cmd.add("|");
+            cmd.add("grep");
+            cmd.add("-w");
             cmd.add(String.valueOf(pid));
         }
 
