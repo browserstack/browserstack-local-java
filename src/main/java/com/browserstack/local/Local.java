@@ -30,19 +30,19 @@ public class Local {
     public Local() {
         avoidValueParameters = new HashMap<String, String>();
         avoidValueParameters.put("v", "-vvv");
-        avoidValueParameters.put("force", "-force");
-        avoidValueParameters.put("forcelocal", "-forcelocal");
-        avoidValueParameters.put("onlyAutomate", "-onlyAutomate");
-        avoidValueParameters.put("forceproxy", "-forceproxy");
+        avoidValueParameters.put("force", "--force");
+        avoidValueParameters.put("forcelocal", "--force-local");
+        avoidValueParameters.put("onlyAutomate", "--only-automate");
+        avoidValueParameters.put("forceproxy", "--force-proxy");
 
         parameters = new HashMap<String, String>();
         parameters.put("f", "-f");
-        parameters.put("only", "-only");
-        parameters.put("localIdentifier", "-localIdentifier");
-        parameters.put("proxyHost", "-proxyHost");
-        parameters.put("proxyPort", "-proxyPort");
-        parameters.put("proxyUser", "-proxyUser");
-        parameters.put("proxyPass", "-proxyPass");
+        parameters.put("only", "--only");
+        parameters.put("localIdentifier", "--local-identifier");
+        parameters.put("proxyHost", "--proxy-host");
+        parameters.put("proxyPort", "--proxy-port");
+        parameters.put("proxyUser", "--proxy-user");
+        parameters.put("proxyPass", "--proxy-pass");
     }
 
     /**

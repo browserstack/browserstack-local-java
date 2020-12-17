@@ -23,6 +23,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testIsRunning() throws Exception {
+    	preconditionKeyExists();
         assertFalse(l.isRunning());
         l.start(options);
         assertTrue(l.isRunning());
@@ -30,6 +31,7 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testMultipleBinary() throws Exception {
+    	preconditionKeyExists();
         l.start(options);
         assertTrue(l.isRunning());
         Local l2 = new Local();
@@ -62,7 +64,7 @@ public class BrowserStackLocalTest {
         options.put("force", "true");
         options.put("onlyCommand", "true");
         l.start(options);
-        assertTrue(l.command.contains("-force"));
+        assertTrue(l.command.contains("--force"));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class BrowserStackLocalTest {
         options.put("only", "true");
         options.put("onlyCommand", "true");
         l.start(options);
-        assertTrue(l.command.contains("-only"));
+        assertTrue(l.command.contains("--only"));
     }
 
     @Test
@@ -78,7 +80,7 @@ public class BrowserStackLocalTest {
         options.put("onlyAutomate", "true");
         options.put("onlyCommand", "true");
         l.start(options);
-        assertTrue(l.command.contains("-onlyAutomate"));
+        assertTrue(l.command.contains("--only-automate"));
     }
 
     @Test
@@ -86,7 +88,7 @@ public class BrowserStackLocalTest {
         options.put("forcelocal", "true");
         options.put("onlyCommand", "true");
         l.start(options);
-        assertTrue(l.command.contains("-forcelocal"));
+        assertTrue(l.command.contains("--force-local"));
     }
 
     @Test
@@ -94,7 +96,7 @@ public class BrowserStackLocalTest {
         options.put("forceproxy", "true");
         options.put("onlyCommand", "true");
         l.start(options);
-        assertTrue(l.command.contains("-forceproxy"));
+        assertTrue(l.command.contains("--force-proxy"));
     }
 
     @Test
@@ -102,7 +104,7 @@ public class BrowserStackLocalTest {
         options.put("localIdentifier", "abcdef");
         options.put("onlyCommand", "true");
         l.start(options);
-        assertTrue(l.command.contains("-localIdentifier"));
+        assertTrue(l.command.contains("--local-identifier"));
         assertTrue(l.command.contains("abcdef"));
     }
 
@@ -114,13 +116,13 @@ public class BrowserStackLocalTest {
         options.put("proxyPass", "pass");
         options.put("onlyCommand", "true");
         l.start(options);
-        assertTrue(l.command.contains("-proxyHost"));
+        assertTrue(l.command.contains("--proxy-host"));
         assertTrue(l.command.contains("localhost"));
-        assertTrue(l.command.contains("-proxyPort"));
+        assertTrue(l.command.contains("--proxy-port"));
         assertTrue(l.command.contains("8080"));
-        assertTrue(l.command.contains("-proxyUser"));
+        assertTrue(l.command.contains("--proxy-user"));
         assertTrue(l.command.contains("user"));
-        assertTrue(l.command.contains("-proxyPass"));
+        assertTrue(l.command.contains("--proxy-pass"));
         assertTrue(l.command.contains("pass"));
     }
 
@@ -159,4 +161,8 @@ public class BrowserStackLocalTest {
     public void tearDown() throws Exception {
         l.stop();
     }
+    
+	private void preconditionKeyExists() {
+		assertTrue("The environment variable BROWSERSTACK_ACCESS_KEY must be set to run the tests.", System.getenv("BROWSERSTACK_ACCESS_KEY") != null );
+	}
 }
