@@ -99,8 +99,8 @@ To use local proxy in local testing -
 * localProxyPass: Password for USERNAME, will be ignored if USERNAME is empty or not specified
 
 ```java
-bsLocalArgs.put("localProxyHost", "127.0.0.1");
-bsLocalArgs.put("localProxyPort", "8000");
+bsLocalArgs.put("-localProxyHost", "127.0.0.1");
+bsLocalArgs.put("-localProxyPort", "8000");
 bsLocalArgs.put("-localProxyUser", "user");
 bsLocalArgs.put("-localProxyPass", "password");
 ```
