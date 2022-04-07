@@ -20,20 +20,20 @@ Add this dependency to your project's POM:
 ```java
 import com.browserstack.local.Local;
 
-# creates an instance of Local
+// creates an instance of Local
 Local bsLocal = new Local();
 
-# replace <browserstack-accesskey> with your key. You can also set an environment variable - "BROWSERSTACK_ACCESS_KEY".
+// replace <browserstack-accesskey> with your key. You can also set an environment variable - "BROWSERSTACK_ACCESS_KEY".
 HashMap<String, String> bsLocalArgs = new HashMap<String, String>();
 bsLocalArgs.put("key", "<browserstack-accesskey>");
 
-# starts the Local instance with the required arguments
+// starts the Local instance with the required arguments
 bsLocal.start(bsLocalArgs);
 
-# check if BrowserStack local instance is running
+// check if BrowserStack local instance is running
 System.out.println(bsLocal.isRunning());
 
-#stop the Local instance
+// stop the Local instance
 bsLocal.stop();
 ```
 
