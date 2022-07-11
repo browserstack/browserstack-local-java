@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 class LocalBinary {
 
     private static final String BIN_URL = "https://bstack-local-prod.s3.amazonaws.com/";
+    private static boolean debugOutput = true;
 
     private String httpPath;
 
@@ -25,10 +26,26 @@ class LocalBinary {
     };
 
     LocalBinary() throws LocalException {
-        initialize();
-        getBinary();
-        checkBinary();
+        try {
+            initialize();
+            getBinary();
+            checkBinary();
+        } catch (Exception ex) {
+            LocalException err = new LocalException("Error trying to download BrowserStackLocal binary");
+            if (debugOutput) {
+                System.err.println(err.toString());
+                System.err.println(ex.toString());
+                err.printStackTrace();
+            }
+            throw err;
+        }
     }
+
+    LocalBinary(boolean debugOutput) throws LocalException {
+        this();
+        this.debugOutput = debugOutput;
+    }
+
 
     private void initialize() throws LocalException {
         String osname = System.getProperty("os.name").toLowerCase();
@@ -51,7 +68,12 @@ class LocalBinary {
                 binFileName = "BrowserStackLocal-linux-ia32";
             }
         } else {
-            throw new LocalException("Failed to detect OS type");
+            LocalException err = new LocalException("Failed to detect OS type");
+            if (debugOutput) {
+                System.err.println(err.toString());
+                err.printStackTrace();
+            }
+            throw err;
         }
 
         httpPath = BIN_URL + binFileName;
@@ -81,7 +103,12 @@ class LocalBinary {
             }
             getBinary();
             if(!validateBinary()){
-                throw new LocalException("BrowserStackLocal binary is corrupt");
+                LocalException err = new LocalException("BrowserStackLocal binary is corrupt");
+                if (debugOutput) {
+                    System.err.println(err.toString());
+                    err.printStackTrace();
+                }
+                throw err;
             }
         }
     }
@@ -104,10 +131,20 @@ class LocalBinary {
 
             return validBinary;
         }catch(IOException ex){
-            throw new LocalException(ex.toString());
+            LocalException err = new LocalException(ex.toString());
+            if (debugOutput) {
+                System.err.println(err.toString());
+                err.printStackTrace();
+            }
+            throw err;
         }
         catch(InterruptedException ex){
-            throw new LocalException(ex.toString());
+            LocalException err = new LocalException(ex.toString());
+            if (debugOutput) {
+                System.err.println(err.toString());
+                err.printStackTrace();
+            }
+            throw err;
         }
     }
 
@@ -133,8 +170,12 @@ class LocalBinary {
             else
                 i++;
         }
-
-        throw new LocalException("Error trying to download BrowserStackLocal binary");
+        LocalException err = new LocalException("Error trying to download BrowserStackLocal binary");
+        if (debugOutput) {
+            System.err.println(err.toString());
+            err.printStackTrace();
+        }
+        throw err;
     }
 
     private boolean makePath(String path) {
@@ -163,7 +204,13 @@ class LocalBinary {
 
             changePermissions(binaryPath);
         } catch (Exception e) {
-            throw new LocalException("Error trying to download BrowserStackLocal binary");
+            LocalException err = new LocalException("Error trying to download BrowserStackLocal binary");
+            if (debugOutput) {
+                System.err.println(err.toString());
+                System.err.println(e.toString());
+                err.printStackTrace();
+            }
+            throw err;
         }
     }
 

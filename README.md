@@ -37,6 +37,13 @@ System.out.println(bsLocal.isRunning());
 bsLocal.stop();
 ```
 
+### Disabling Error Logging
+While creating the instance of Local, pass false to debugOutput.
+```
+// creates an instance of Local without debug output
+Local bsLocal = new Local(false);
+```
+
 ## Arguments
 
 Apart from the key, all other BrowserStack Local modifiers are optional. For the full list of modifiers, refer [BrowserStack Local modifiers](https://www.browserstack.com/local-testing#modifiers). For examples, refer below -

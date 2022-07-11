@@ -27,6 +27,8 @@ public class Local {
     private final Map<String, String> parameters;
     private final Map<String, String> avoidValueParameters;
 
+    private static boolean debugOutput = true;
+
     public Local() {
         avoidValueParameters = new HashMap<String, String>();
         avoidValueParameters.put("v", "-vvv");
@@ -45,6 +47,11 @@ public class Local {
         parameters.put("proxyPass", "-proxyPass");
     }
 
+    public Local(boolean debugOutput) {
+        this();
+        this.debugOutput = debugOutput;
+    }
+
     /**
      * Starts Local instance with options
      *
@@ -56,7 +63,7 @@ public class Local {
         if (options.get("binarypath") != null) {
             binaryPath = options.get("binarypath");
         } else {
-            LocalBinary lb = new LocalBinary();
+            LocalBinary lb = new LocalBinary(debugOutput);
             binaryPath = lb.getBinaryPath();
         }
 
@@ -109,7 +116,7 @@ public class Local {
         if (options.get("binarypath") != null) {
             binaryPath = options.get("binarypath");
         } else {
-            LocalBinary lb = new LocalBinary();
+            LocalBinary lb = new LocalBinary(debugOutput);
             binaryPath = lb.getBinaryPath();
         }
         makeCommand(options, "stop");
