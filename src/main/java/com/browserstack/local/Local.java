@@ -84,12 +84,27 @@ public class Local {
             }
             int r = proc.waitFor();
 
-            JSONObject obj = new JSONObject(!stdout.equals("") ? stdout : stderr);
-            if(!obj.getString("state").equals("connected")){
-                throw new LocalException(obj.getJSONObject("message").getString("message"));
-            }
-            else {
-                pid = obj.getInt("pid");
+            String messageString = !stdout.equals("") ? stdout : stderr;
+
+            try {
+                JSONObject obj = new JSONObject(messageString);
+                if(!obj.getString("state").equals("connected")){
+                    if (debugOutput) {
+                        System.err.println("Message Body");
+                        System.err.println(messageString);
+                    }
+                    throw new LocalException(obj.getJSONObject("message").getString("message"));
+                }
+                else {
+                    pid = obj.getInt("pid");
+                }
+            } catch (Exception ex) {
+                if (debugOutput) {
+                    System.err.println("Binary Response Parse Error:");
+                    ex.printStackTrace();
+                    System.err.println("Message Body");
+                    System.err.println(messageString);
+                }
             }
         }
     }

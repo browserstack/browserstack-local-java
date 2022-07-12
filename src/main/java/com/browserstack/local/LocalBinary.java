@@ -33,9 +33,8 @@ class LocalBinary {
         } catch (Exception ex) {
             LocalException err = new LocalException("Error trying to download BrowserStackLocal binary");
             if (debugOutput) {
-                System.err.println(err.toString());
-                System.err.println(ex.toString());
-                err.printStackTrace();
+                System.err.println(err);
+                ex.printStackTrace();
             }
             throw err;
         }
@@ -70,7 +69,6 @@ class LocalBinary {
         } else {
             LocalException err = new LocalException("Failed to detect OS type");
             if (debugOutput) {
-                System.err.println(err.toString());
                 err.printStackTrace();
             }
             throw err;
@@ -105,7 +103,6 @@ class LocalBinary {
             if(!validateBinary()){
                 LocalException err = new LocalException("BrowserStackLocal binary is corrupt");
                 if (debugOutput) {
-                    System.err.println(err.toString());
                     err.printStackTrace();
                 }
                 throw err;
@@ -133,7 +130,6 @@ class LocalBinary {
         }catch(IOException ex){
             LocalException err = new LocalException(ex.toString());
             if (debugOutput) {
-                System.err.println(err.toString());
                 err.printStackTrace();
             }
             throw err;
@@ -141,7 +137,6 @@ class LocalBinary {
         catch(InterruptedException ex){
             LocalException err = new LocalException(ex.toString());
             if (debugOutput) {
-                System.err.println(err.toString());
                 err.printStackTrace();
             }
             throw err;
@@ -172,7 +167,6 @@ class LocalBinary {
         }
         LocalException err = new LocalException("Error trying to download BrowserStackLocal binary");
         if (debugOutput) {
-            System.err.println(err.toString());
             err.printStackTrace();
         }
         throw err;
@@ -207,8 +201,7 @@ class LocalBinary {
             LocalException err = new LocalException("Error trying to download BrowserStackLocal binary");
             if (debugOutput) {
                 System.err.println(err.toString());
-                System.err.println(e.toString());
-                err.printStackTrace();
+                e.printStackTrace();
             }
             throw err;
         }
