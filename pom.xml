@@ -3,7 +3,7 @@
     <groupId>com.browserstack</groupId>
     <artifactId>browserstack-local-java</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
 
     <name>browserstack-local-java</name>
     <description>Java bindings for BrowserStack Local</description>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20160212</version>
+            <version>20230227</version>
         </dependency>
     </dependencies>
 
@@ -134,7 +134,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
