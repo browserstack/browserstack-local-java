@@ -24,9 +24,13 @@ class LocalBinary {
             System.getProperty("java.io.tmpdir")
     };
 
-    LocalBinary() throws LocalException {
+    LocalBinary(String path) throws LocalException {
         initialize();
-        getBinary();
+        if (path != "") {
+            getBinaryOnPath(path);
+        } else {
+            getBinary();
+        }
         checkBinary();
     }
 
@@ -111,6 +115,14 @@ class LocalBinary {
         }
     }
 
+    private void getBinaryOnPath(String path) throws LocalException {
+        binaryPath = path;
+
+        if (!new File(binaryPath).exists()) {
+            downloadBinary(binaryPath, true);
+        }
+    }
+
     private void getBinary() throws LocalException {
         String destParentDir = getAvailableDirectory();
         binaryPath = destParentDir + "/BrowserStackLocal";
@@ -120,7 +132,7 @@ class LocalBinary {
         }
 
         if (!new File(binaryPath).exists()) {
-            downloadBinary(destParentDir);
+            downloadBinary(destParentDir, false);
         }
     }
 
@@ -147,23 +159,26 @@ class LocalBinary {
         }
     }
 
-    private void downloadBinary(String destParentDir) throws LocalException {
+    private void downloadBinary(String destParentDir, Boolean custom) throws LocalException {
         try {
-            if (!new File(destParentDir).exists())
-                new File(destParentDir).mkdirs();
+            String source = destParentDir;
+            if (!custom) {
+                if (!new File(destParentDir).exists())
+                    new File(destParentDir).mkdirs();
 
-            URL url = new URL(httpPath);
-            String source = destParentDir + "/BrowserStackLocal";
-            if (isOSWindows) {
-                source += ".exe";
+                source = destParentDir + "/BrowserStackLocal";
+                if (isOSWindows) {
+                    source += ".exe";
+                }
             }
+            URL url = new URL(httpPath);
 
             File f = new File(source);
             FileUtils.copyURLToFile(url, f);
 
             changePermissions(binaryPath);
         } catch (Exception e) {
-            throw new LocalException("Error trying to download BrowserStackLocal binary");
+            throw new LocalException("Error trying to download BrowserStackLocal binary: " + e.getMessage());
         }
     }
 
