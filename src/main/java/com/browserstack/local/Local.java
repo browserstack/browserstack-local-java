@@ -23,7 +23,7 @@ public class Local {
     private LocalProcess proc = null;
 
     // Current version of binding package, used for --source option of binary
-    private final String packageVersion = "1.0.9";
+    private final String packageVersion = "1.1.0";
     private final Map<String, String> parameters;
     private final Map<String, String> avoidValueParameters;
 
@@ -53,12 +53,13 @@ public class Local {
      */
     public void start(Map<String, String> options) throws Exception {
         startOptions = options;
+        LocalBinary lb;
         if (options.get("binarypath") != null) {
-            binaryPath = options.get("binarypath");
+            lb = new LocalBinary(options.get("binarypath"));
         } else {
-            LocalBinary lb = new LocalBinary();
-            binaryPath = lb.getBinaryPath();
+            lb = new LocalBinary("");
         }
+        binaryPath = lb.getBinaryPath();
 
         makeCommand(options, "start");
 
@@ -106,12 +107,13 @@ public class Local {
     * @param options Options supplied for the Local instance
     **/
     public void stop(Map<String, String> options) throws Exception {
+        LocalBinary lb;
         if (options.get("binarypath") != null) {
-            binaryPath = options.get("binarypath");
+            lb = new LocalBinary(options.get("binarypath"));
         } else {
-            LocalBinary lb = new LocalBinary();
-            binaryPath = lb.getBinaryPath();
+            lb = new LocalBinary("");
         }
+        binaryPath = lb.getBinaryPath();
         makeCommand(options, "stop");
         proc = runCommand(command);
         proc.waitFor();
