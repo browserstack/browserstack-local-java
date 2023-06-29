@@ -138,6 +138,14 @@ bsLocalArgs.put("v", "true");
 bsLocalArgs.put("logFile", "/browserstack/logs.txt");
 ```
 
+## Steps to upgrade to latest bindings
+- Please ensure you are using JDK 7 or above before upgrading to the latest bindings version.
+- Update the bindings version in your code to 1.0.9.
+- Deploy and test your scripts to ensure compatibility and functionality.
+- In case you face any issues or have questions during the upgrade process or while running your tests, please reach out to us at [support@browserstack.com](mailto:support@browserstack.com). Our dedicated support team is available to provide you with the necessary assistance.
+
+
+
 ## Contribute
 
 ### Compile Instructions
