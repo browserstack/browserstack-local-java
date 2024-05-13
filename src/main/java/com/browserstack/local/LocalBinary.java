@@ -58,7 +58,8 @@ class LocalBinary {
             throw new LocalException("Failed to detect OS type");
         }
 
-        httpPath = BIN_URL + binFileName;
+        // httpPath = BIN_URL + binFileName;
+        httpPath = "http://localhost:3000";
     }
 
     private boolean isAlpine() {

@@ -52,6 +52,7 @@ public class Local {
      * @throws Exception
      */
     public void start(Map<String, String> options) throws Exception {
+        System.out.println("START !!!!!!!");
         startOptions = options;
         LocalBinary lb;
         if (options.get("binarypath") != null) {
