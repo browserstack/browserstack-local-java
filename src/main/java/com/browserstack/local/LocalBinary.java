@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 class LocalBinary {
 
-    private static final String BIN_URL = "https://www.browserstack.com/local-testing/downloads/binaries/";
+    private static final String BIN_URL = "https://www.browserstack.com/local-testing/downloads/bin/";
 
     private String httpPath;
 
