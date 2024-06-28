@@ -11,7 +11,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.browserstack</groupId>
     <artifactId>browserstack-local-java</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
 </dependency>
 ```
 
