@@ -62,7 +62,13 @@ class LocalBinary {
             throw new LocalException("Failed to detect OS type");
         }
 
-        httpPath = BIN_URL + binFileName;
+        String sourceURL = BIN_URL;
+        String envURL = System.getenv("BROWSERSTACK_LOCAL_BIN_URL");
+        if (envURL != null && !envURL.isEmpty()) {
+            // apply sourceURL override
+            sourceURL = envURL;
+        }
+        httpPath = sourceURL + binFileName;
     }
 
     private boolean isAlpine() {
@@ -209,6 +215,10 @@ class LocalBinary {
         }
 
         try (InputStream stream = new GZIPInputStream(conn.getInputStream())) {
+            if (System.getenv().containsKey("BROWSERSTACK_LOCAL_DEBUG_GZIP")) {
+                System.out.println("using gzip in " + conn.getRequestProperty("User-Agent"));
+            }
+
             FileUtils.copyToFile(stream, f);
         } catch (ZipException e) {
             FileUtils.copyURLToFile(url, f);
