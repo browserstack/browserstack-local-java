@@ -23,7 +23,7 @@ public class Local {
     private LocalProcess proc = null;
 
     // Current version of binding package, used for --source option of binary
-    private final String packageVersion = "1.1.4";
+    private static final String packageVersion = "1.1.4";
     private final Map<String, String> parameters;
     private final Map<String, String> avoidValueParameters;
 
@@ -128,6 +128,15 @@ public class Local {
     public boolean isRunning() throws Exception {
         if (pid == 0) return false;
         return isProcessRunning(pid);
+    }
+
+    /**
+     * Returns the package version
+     *
+     * @return {String} package version
+     */
+    public static String getPackageVersion() {
+        return packageVersion;
     }
 
     /**
