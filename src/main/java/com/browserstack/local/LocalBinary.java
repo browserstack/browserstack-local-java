@@ -63,11 +63,6 @@ class LocalBinary {
         }
 
         String sourceURL = BIN_URL;
-        String envURL = System.getenv("BROWSERSTACK_LOCAL_BIN_URL");
-        if (envURL != null && !envURL.isEmpty()) {
-            // apply sourceURL override
-            sourceURL = envURL;
-        }
         httpPath = sourceURL + binFileName;
     }
 
