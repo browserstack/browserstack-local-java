@@ -205,7 +205,7 @@ class LocalBinary {
         String contentEncoding = conn.getContentEncoding();
 
         if (contentEncoding == null || !contentEncoding.toLowerCase().contains("gzip")) {
-            FileUtils.copyToFile(conn.getInputStream(), f);
+            customCopyInputStreamToFile(conn.getInputStream(), f, url);
             return;
         }
 
@@ -214,9 +214,17 @@ class LocalBinary {
                 System.out.println("using gzip in " + conn.getRequestProperty("User-Agent"));
             }
 
-            FileUtils.copyToFile(stream, f);
+            customCopyInputStreamToFile(stream, f, url);
         } catch (ZipException e) {
             FileUtils.copyURLToFile(url, f);
+        }
+    }
+
+    private static void customCopyInputStreamToFile(InputStream stream, File file, URL url) throws IOException {
+        try {
+            FileUtils.copyInputStreamToFile(stream, file); 
+        } catch (Throwable e) {
+            FileUtils.copyURLToFile(url, file);
         }
     }
 }
