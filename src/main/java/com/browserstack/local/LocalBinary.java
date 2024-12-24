@@ -1,11 +1,14 @@
 package com.browserstack.local;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Pattern;
@@ -224,7 +227,11 @@ class LocalBinary {
         try {
             FileUtils.copyInputStreamToFile(stream, file); 
         } catch (Throwable e) {
-            FileUtils.copyURLToFile(url, file);
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                IOUtils.copy(stream, fos);
+            } catch (Throwable th) {
+                FileUtils.copyURLToFile(url, file);
+            }
         }
     }
 }
