@@ -55,9 +55,9 @@ public class Local {
         startOptions = options;
         LocalBinary lb;
         if (options.get("binarypath") != null) {
-            lb = new LocalBinary(options.get("binarypath"));
+            lb = new LocalBinary(options.get("binarypath"), options.get("key"));
         } else {
-            lb = new LocalBinary("");
+            lb = new LocalBinary("", options.get("key"));
         }
         binaryPath = lb.getBinaryPath();
 
