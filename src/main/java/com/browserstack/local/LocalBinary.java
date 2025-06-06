@@ -47,12 +47,23 @@ class LocalBinary {
     LocalBinary(String path, String key) throws LocalException {
         this.key = key;
         initialize();
-        if (path != "") {
-            getBinaryOnPath(path);
-        } else {
-            getBinary();
+        downloadAndVerifyBinary(path);
+    }
+
+    private void downloadAndVerifyBinary(String path) throws LocalException {
+        try {
+            if (path != "") {
+                getBinaryOnPath(path);
+            } else {
+                getBinary();
+            }
+            checkBinary();
+        } catch (Throwable e) {
+            if (fallbackEnabled) throw e;
+            fallbackEnabled = true;
+            downloadFailureThrowable = e;
+            downloadAndVerifyBinary(path);
         }
-        checkBinary();
     }
 
     private void initialize() throws LocalException {
@@ -181,6 +192,11 @@ class LocalBinary {
     }
 
     private void fetchSourceUrl() {
+        if ((!fallbackEnabled && sourceUrl) || (fallbackEnabled && !downloadFailureThrowable)) {
+            /* Retry because binary (from any of the endpoints) validation failed */
+            return;
+        }
+
         URL url = new URL("https://local.browserstack.com/binary/api/v1/endpoint");
         URLConnection connection = url.openConnection();
         
@@ -207,6 +223,7 @@ class LocalBinary {
             String responseBody = response.toString();
             JSONObject json = new JSONObject(responseBody);
             this.sourceUrl = json.getJSONObject("data").getString("endpoint");
+            if(fallbackEnabled) downloadFailureThrowable = null;
         }
     }
 
@@ -227,15 +244,8 @@ class LocalBinary {
             URL url = new URL(sourceUrl + '/' + binaryFileName);
 
             File f = new File(source);
-            try {
-                newCopyToFile(url, f);
-            } catch (IOException e) {
-                if (fallbackEnabled) throw e;
-                /* Binary download failed due to a server error */
-                fallbackEnabled = true;
-                downloadFailureThrowable = e;
-                downloadBinary(destParentDir, custom);
-            }
+            newCopyToFile(url, f);
+
             changePermissions(binaryPath);
         } catch (Throwable e) {
             throw new LocalException("Error trying to download BrowserStackLocal binary: " + e.getMessage());
