@@ -60,6 +60,10 @@ class LocalBinary {
             checkBinary();
         } catch (Throwable e) {
             if (fallbackEnabled) throw e;
+            File binary_file = new File(binaryPath);
+            if (binary_file.exists()) {
+              binary_file.delete();
+            }
             fallbackEnabled = true;
             downloadFailureThrowable = e;
             downloadAndVerifyBinary(path);
@@ -191,39 +195,46 @@ class LocalBinary {
         }
     }
 
-    private void fetchSourceUrl() {
-        if ((!fallbackEnabled && sourceUrl) || (fallbackEnabled && !downloadFailureThrowable)) {
+    private void fetchSourceUrl() throws LocalException {
+        if ((!fallbackEnabled && sourceUrl != null) || (fallbackEnabled && downloadFailureThrowable == null)) {
             /* Retry because binary (from any of the endpoints) validation failed */
             return;
         }
 
-        URL url = new URL("https://local.browserstack.com/binary/api/v1/endpoint");
-        URLConnection connection = url.openConnection();
-        
-        connection.setDoOutput(true);
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("User-Agent", "browserstack-local-java/" + Local.getPackageVersion());
-        connection.setRequestProperty("Accept", "application/json");
-        if (fallbackEnabled) connection.setRequestProperty("X-Local-Fallback-Cloudflare", "true");
+        try {
+          URL url = new URL("https://local.browserstack.com/binary/api/v1/endpoint");
+          URLConnection connection = url.openConnection();
+          
+          connection.setDoOutput(true);
+          connection.setRequestProperty("Content-Type", "application/json");
+          connection.setRequestProperty("User-Agent", "browserstack-local-java/" + Local.getPackageVersion());
+          connection.setRequestProperty("Accept", "application/json");
+          if (fallbackEnabled) connection.setRequestProperty("X-Local-Fallback-Cloudflare", "true");
 
-        String jsonInput = "{\"auth_token\": " + key + (fallbackEnabled ? (", \"error_message\": " + downloadFailureThrowable.getMessage()) : "") + "}";
+          String jsonInput = "{\"auth_token\": \"" + key + (fallbackEnabled ? ("\", \"error_message\": \"" + downloadFailureThrowable.getMessage()) + "\"" : "\"") + "}";
 
-        try (OutputStream os = connection.getOutputStream()) {
-            byte[] input = jsonInput.getBytes("utf-8");
-            os.write(input, 0, input.length);
-        }
+          try (OutputStream os = connection.getOutputStream()) {
+              byte[] input = jsonInput.getBytes("utf-8");
+              os.write(input, 0, input.length);
+          }
 
-        try (InputStream is = connection.getInputStream();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"))) {
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line.trim());
-            }
-            String responseBody = response.toString();
-            JSONObject json = new JSONObject(responseBody);
-            this.sourceUrl = json.getJSONObject("data").getString("endpoint");
-            if(fallbackEnabled) downloadFailureThrowable = null;
+          try (InputStream is = connection.getInputStream();
+              BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"))) {
+              StringBuilder response = new StringBuilder();
+              String line;
+              while ((line = reader.readLine()) != null) {
+                  response.append(line.trim());
+              }
+              String responseBody = response.toString();
+              JSONObject json = new JSONObject(responseBody);
+              if (json.has("error")) {
+                throw new Exception(json.getString("error"));
+              }
+              this.sourceUrl = json.getJSONObject("data").getString("endpoint");
+              if(fallbackEnabled) downloadFailureThrowable = null;
+          }
+        } catch (Throwable e) {
+          throw new LocalException("Error trying to fetch the source URL: " + e.getMessage());
         }
     }
 
