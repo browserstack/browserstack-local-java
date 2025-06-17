@@ -3,7 +3,7 @@
     <groupId>com.browserstack</groupId>
     <artifactId>browserstack-local-java</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.5</version>
+    <version>1.1.6</version>
 
     <name>browserstack-local-java</name>
     <description>Java bindings for BrowserStack Local</description>
