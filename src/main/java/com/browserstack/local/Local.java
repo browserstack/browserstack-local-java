@@ -23,7 +23,7 @@ public class Local {
     private LocalProcess proc = null;
 
     // Current version of binding package, used for --source option of binary
-    private static final String packageVersion = "1.1.5";
+    private static final String packageVersion = "1.1.6";
     private final Map<String, String> parameters;
     private final Map<String, String> avoidValueParameters;
 
