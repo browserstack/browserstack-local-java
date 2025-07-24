@@ -207,12 +207,17 @@ class LocalBinary {
           connection.setRequestProperty("Content-Type", "application/json");
           connection.setRequestProperty("User-Agent", "browserstack-local-java/" + Local.getPackageVersion());
           connection.setRequestProperty("Accept", "application/json");
-          if (fallbackEnabled) connection.setRequestProperty("X-Local-Fallback-Cloudflare", "true");
 
-          String jsonInput = "{\"auth_token\": \"" + key + (fallbackEnabled ? ("\", \"error_message\": \"" + downloadFailureThrowable.getMessage()) + "\"" : "\"") + "}";
+          JSONObject inputParams = new JSONObject();
+          inputParams.put("auth_token", this.key);
+          if (fallbackEnabled) {
+              connection.setRequestProperty("X-Local-Fallback-Cloudflare", "true");
+              inputParams.put("error_message", downloadFailureThrowable.getMessage());
+          }
+          String jsonInputParams = inputParams.toString();
 
           try (OutputStream os = connection.getOutputStream()) {
-              byte[] input = jsonInput.getBytes("utf-8");
+              byte[] input = jsonInputParams.getBytes("utf-8");
               os.write(input, 0, input.length);
           }
 
