@@ -22,6 +22,9 @@ import java.lang.StringBuilder;
 
 class LocalBinary {
 
+    private static final String[] ALLOWED_DOWNLOAD_HOSTS = { "browserstack.com" };
+    private static final String[] ALLOWED_DOWNLOAD_HOST_SUFFIXES = { ".browserstack.com" };
+
     private String binaryFileName;
 
     private String sourceUrl;
@@ -41,6 +44,34 @@ class LocalBinary {
             System.getProperty("user.dir"),
             System.getProperty("java.io.tmpdir")
     };
+
+    private static String validateSourceUrl(String url) throws LocalException {
+        if (url == null || url.isEmpty()) {
+            throw new LocalException("Refusing binary download: empty source URL");
+        }
+        URL parsed;
+        try {
+            parsed = new URL(url);
+        } catch (java.net.MalformedURLException e) {
+            throw new LocalException("Refusing binary download: malformed source URL");
+        }
+        if (!"https".equalsIgnoreCase(parsed.getProtocol())) {
+            throw new LocalException("Refusing binary download from non-HTTPS source URL");
+        }
+        String host = parsed.getHost();
+        if (host == null || host.isEmpty()) {
+            throw new LocalException("Refusing binary download: source URL has no host");
+        }
+        host = host.toLowerCase();
+        for (String allowed : ALLOWED_DOWNLOAD_HOSTS) {
+            if (host.equals(allowed)) return url;
+        }
+        for (String suffix : ALLOWED_DOWNLOAD_HOST_SUFFIXES) {
+            if (host.endsWith(suffix)) return url;
+        }
+        throw new LocalException(
+            "Refusing binary download: host '" + host + "' is not in the allowed host list");
+    }
 
     LocalBinary(String path, String key) throws LocalException {
         this.key = key;
@@ -235,7 +266,7 @@ class LocalBinary {
               if (json.has("error")) {
                 throw new Exception(json.getString("error"));
               }
-              this.sourceUrl = json.getJSONObject("data").getString("endpoint");
+              this.sourceUrl = validateSourceUrl(json.getJSONObject("data").getString("endpoint"));
               if(fallbackEnabled) downloadFailureThrowable = null;
           }
         } catch (Throwable e) {
