@@ -23,7 +23,7 @@ public class Local {
     private LocalProcess proc = null;
 
     // Current version of binding package, used for --source option of binary
-    private static final String packageVersion = "1.1.8";
+    private static final String packageVersion = "1.1.9";
     private final Map<String, String> parameters;
     private final Map<String, String> avoidValueParameters;
 
@@ -159,7 +159,7 @@ public class Local {
             if (IGNORE_KEYS.contains(parameter)) {
                 continue;
             }
-            if (avoidValueParameters.get(parameter) != null && opt.getValue().trim().toLowerCase() != "false") {
+            if (avoidValueParameters.get(parameter) != null && !"false".equals(opt.getValue().trim().toLowerCase())) {
                 command.add(avoidValueParameters.get(parameter));
             } else {
                 if (parameters.get(parameter) != null) {

@@ -245,7 +245,7 @@ class LocalBinary {
           inputParams.put("auth_token", this.key);
           if (fallbackEnabled) {
               connection.setRequestProperty("X-Local-Fallback-Cloudflare", "true");
-              inputParams.put("error_message", downloadFailureThrowable.getMessage());
+              inputParams.put("error_message", downloadFailureThrowable.getClass().getName());
           }
           String jsonInputParams = inputParams.toString();
 
