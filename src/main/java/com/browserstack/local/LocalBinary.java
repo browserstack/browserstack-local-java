@@ -45,6 +45,11 @@ class LocalBinary {
             System.getProperty("java.io.tmpdir")
     };
 
+    // Each guard below covers a case the final host-equals check does not:
+    //   - null/empty URL: new URL(null) throws NPE before the catch can run.
+    //   - MalformedURLException: convert raw JVM exception to LocalException for the public contract.
+    //   - HTTPS check: allowlist matches host only; without this, http://browserstack.com would pass.
+    //   - null/empty host: getHost() returns null for URLs like https:///foo, which NPEs on toLowerCase().
     private static String validateSourceUrl(String url) throws LocalException {
         if (url == null || url.isEmpty()) {
             throw new LocalException("Refusing binary download: empty source URL");
