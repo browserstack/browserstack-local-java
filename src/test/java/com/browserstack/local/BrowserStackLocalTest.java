@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNotNull;
 
 public class BrowserStackLocalTest {
     private Local l;
@@ -23,6 +24,10 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testIsRunning() throws Exception {
+        // Live integration test: starts a real BrowserStack Local tunnel, so it
+        // requires a valid BROWSERSTACK_ACCESS_KEY (provided via CI secrets).
+        // Skip gracefully when the key is absent instead of failing with an NPE.
+        assumeNotNull(System.getenv("BROWSERSTACK_ACCESS_KEY"));
         assertFalse(l.isRunning());
         l.start(options);
         assertTrue(l.isRunning());
@@ -30,6 +35,10 @@ public class BrowserStackLocalTest {
 
     @Test
     public void testMultipleBinary() throws Exception {
+        // Live integration test: starts real BrowserStack Local tunnels, so it
+        // requires a valid BROWSERSTACK_ACCESS_KEY (provided via CI secrets).
+        // Skip gracefully when the key is absent instead of failing with an NPE.
+        assumeNotNull(System.getenv("BROWSERSTACK_ACCESS_KEY"));
         l.start(options);
         assertTrue(l.isRunning());
         Local l2 = new Local();
