@@ -76,7 +76,12 @@ class LocalBinary {
         if (isOSWindows) {
             binFileName = "BrowserStackLocal.exe";
         } else if (osname.contains("mac") || osname.contains("darwin")) {
-            binFileName = "BrowserStackLocal-darwin-x64";
+            String arch = System.getProperty("os.arch");
+            if (arch.contains("aarch64") || arch.contains("arm64")) {
+                binFileName = "BrowserStackLocal-darwin-arm64";
+            } else {
+                binFileName = "BrowserStackLocal-darwin-x64";
+            }
         } else if (osname.contains("linux")) {
             String arch = System.getProperty("os.arch");
             if (arch.contains("aarch64")) {
