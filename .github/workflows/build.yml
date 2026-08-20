@@ -1,0 +1,55 @@
+# Build + unit tests. Replaces the abandoned Travis config, which fetched a Maven
+# distribution over the network with no integrity check (CWE-494).
+#
+# Rules for this file:
+#   * every third-party action is pinned by full commit SHA, never a mutable tag;
+#   * Maven comes from the runner image / setup-java, never an ad-hoc download;
+#   * `-C` makes Maven FAIL (not warn) on a checksum mismatch for any artifact.
+name: Build
+
+on:
+  pull_request:
+    branches: ["master", "main"]
+  push:
+    branches: ["master", "main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['8', '11', '17']
+    name: build (JDK ${{ matrix.java }})
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+
+      # -C = strict checksum policy: a checksum mismatch on any resolved artifact
+      # fails the build instead of printing a warning.
+      #
+      # -DskipTests still COMPILES the tests (it only skips running them), so this
+      # job covers what CI can actually prove here: the enforcer rules, every pinned
+      # plugin version, and that main + test sources compile at source/target 1.7 on
+      # each JDK.
+      #
+      # The tests themselves are deliberately NOT run. They are credential-gated
+      # live-integration tests, not offline units: 12 of the 14 reach
+      # LocalBinary.getBinary(), which downloads the real BrowserStackLocal binary
+      # from an authenticated endpoint and returns HTTP 401 without
+      # BROWSERSTACK_ACCESS_KEY. A keyless runner therefore cannot pass them, and
+      # wiring a key in would both run real tunnels on every push and still fail for
+      # pull requests from forks (which get no secrets).
+      #
+      # To run the full suite locally:
+      #   BROWSERSTACK_ACCESS_KEY=... BROWSERSTACK_USERNAME=... mvn -B -C test
+      - name: Build (compile, tests skipped - see above)
+        run: mvn -B -C -Dgpg.skip -DskipTests clean verify

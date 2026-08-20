@@ -16,6 +16,13 @@
         </license>
     </licenses>
 
+    <properties>
+        <!-- Without this the build uses the platform default encoding, so the same
+             source produces different bytes on different machines. -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
     <developers>
         <developer>
             <name>BrowserStack</name>
@@ -72,6 +79,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -96,6 +104,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
+                        <version>3.4.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -108,6 +117,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.12.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -126,6 +136,46 @@
     </profiles>
 
     <build>
+        <!-- Maven binds these six to the lifecycle itself. Left unpinned they take
+             whatever the running Maven distribution's super-POM happens to default to
+             (Maven 3.8.6 gives jar 2.4 / resources 2.6 / install 2.4 / deploy 2.7 /
+             clean 2.5 / site 3.3, all circa 2013) — so the same source builds with a
+             different plugin set on a different machine. Pinning them makes the build
+             reproducible and retires the 2013 versions. -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.22.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.sonatype.central</groupId>
@@ -140,8 +190,49 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>enforce-deterministic-dependencies</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <!-- No version ranges / LATEST / RELEASE: every
+                                     coordinate resolves to the same artifact on
+                                     every build, on every machine. -->
+                                <banDynamicVersions>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <allowLatest>false</allowLatest>
+                                    <allowRelease>false</allowRelease>
+                                    <allowRanges>false</allowRanges>
+                                </banDynamicVersions>
+                                <requireReleaseDeps>
+                                    <message>No SNAPSHOT dependencies allowed.</message>
+                                </requireReleaseDeps>
+                                <!-- Every plugin must carry an explicit version, so a new
+                                     upstream release cannot silently enter the build (this
+                                     is what used to happen on the gpg/source/javadoc
+                                     signing path). -->
+                                <requirePluginVersions>
+                                    <banLatest>true</banLatest>
+                                    <banRelease>true</banRelease>
+                                    <banSnapshots>true</banSnapshots>
+                                    <phases>clean,deploy,site</phases>
+                                </requirePluginVersions>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.14.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
@@ -150,7 +241,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.2</version>
+                <version>3.5.6</version>
             </plugin>
         </plugins>
     </build>
