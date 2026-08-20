@@ -35,5 +35,21 @@ jobs:
 
       # -C = strict checksum policy: a checksum mismatch on any resolved artifact
       # fails the build instead of printing a warning.
-      - name: Build and test
-        run: mvn -B -C -Dgpg.skip clean verify
+      #
+      # -DskipTests still COMPILES the tests (it only skips running them), so this
+      # job covers what CI can actually prove here: the enforcer rules, every pinned
+      # plugin version, and that main + test sources compile at source/target 1.7 on
+      # each JDK.
+      #
+      # The tests themselves are deliberately NOT run. They are credential-gated
+      # live-integration tests, not offline units: 12 of the 14 reach
+      # LocalBinary.getBinary(), which downloads the real BrowserStackLocal binary
+      # from an authenticated endpoint and returns HTTP 401 without
+      # BROWSERSTACK_ACCESS_KEY. A keyless runner therefore cannot pass them, and
+      # wiring a key in would both run real tunnels on every push and still fail for
+      # pull requests from forks (which get no secrets).
+      #
+      # To run the full suite locally:
+      #   BROWSERSTACK_ACCESS_KEY=... BROWSERSTACK_USERNAME=... mvn -B -C test
+      - name: Build (compile, tests skipped - see above)
+        run: mvn -B -C -Dgpg.skip -DskipTests clean verify
